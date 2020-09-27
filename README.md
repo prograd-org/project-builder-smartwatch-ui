@@ -28,7 +28,7 @@ Create the design of smartwatch.
 ### Progression 2: SET THE DATE AND TIME
 Set the date and time in the smartwatch.
 
-![Image description](https://i1.faceprep.in/ProGrad/sm-1.png)
+![Image description](https://i1.faceprep.in/ProGrad/sm-1.PNG)
 
 
 Happy Coding ProGrads❤️
