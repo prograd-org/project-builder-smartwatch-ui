@@ -1,6 +1,6 @@
 ![Image description](https://i1.faceprep.in/ProGrad/prograd-logo.png)
 
-# ProGrad Project-Builder | JS | SMARTWATCH UI
+# ProGrad Project-Builder | HTML & CSS | SMARTWATCH UI
 
 We have learned all the important concepts in JavaScript. Now lets work with our project builder in building a smartwatch, applying all of the concepts we have just learned.
 
