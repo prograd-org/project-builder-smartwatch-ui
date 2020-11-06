@@ -1,0 +1,37 @@
+.watch {
+    width: 250px;
+    height: 250px;
+    background-color: black;
+    border: 20px grey solid;
+    border-top-width: 20px;
+    border-bottom-width: 20px;
+    border-left: none;
+    border-right: none;
+    border-radius: 40px;
+    margin: auto;
+}
+
+.timesmall {
+    color: white;
+    font-size: small;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.timebig {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.day {
+    color: white;
+    margin-top: -25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
