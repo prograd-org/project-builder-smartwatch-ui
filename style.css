@@ -1,0 +1,52 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+#leftside{
+    text-align: center;
+    padding-top: 350px;
+    width: 50%;
+    height: 657px;
+    background-color: rgb(48, 45, 45);
+    color: white;
+}
+#rightside{
+    border-bottom: 20px solid rgb(48, 45, 45);
+    border-top: 20px solid rgb(48, 45, 45);
+    border-radius: 22%;
+    width: 240px;
+    height: 300px;
+    color: white;
+    margin-left: 200px;
+    margin-top: 150px;
+    background-color: black;
+    text-align: center;
+}
+#container{
+    display: flex;
+}
+#time1{
+    margin-top: 10px;
+    font-size:large;
+}
+#time2{
+    font-weight: bold;
+    font-size: 50px;
+    padding-top: 55px;
+}
+#day{
+    font-size:large;
+}
+img{
+
+    width: 25px;
+    margin-top: 50px;
+    margin-left: 15px;
+    margin-right: 50px;
+}
+#logos{
+    display: flex;
+    margin-right: 20px;
+    
+}
