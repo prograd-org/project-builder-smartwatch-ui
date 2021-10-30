@@ -19,10 +19,12 @@
     height: 300px;
     color: white;
     margin-left: 200px;
+    box-sizing: border-box;
     margin-top: 150px;
     background-color: black;
     text-align: center;
 }
+
 #container{
     display: flex;
 }
@@ -38,15 +40,27 @@
 #day{
     font-size:large;
 }
-img{
 
-    width: 25px;
-    margin-top: 50px;
-    margin-left: 15px;
-    margin-right: 50px;
+i{
+    cursor:pointer;
 }
 #logos{
+    margin-top: 45px;
     display: flex;
-    margin-right: 20px;
-    
+    justify-content: space-around;
+}
+#msg-container{
+    display: none;
+    height: 22vh;
+    color: black;
+    text-align: left;
+    margin-left: 5%;
+    margin-top: 5%;
+    width: 90%;
+    background-color: white;
+    border-radius: 5px;
+}
+div>p{
+    padding: 10px;
+    cursor: pointer;
 }
