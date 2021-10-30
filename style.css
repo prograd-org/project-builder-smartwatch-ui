@@ -1,0 +1,54 @@
+body{
+  background-color: cornsilk;
+  padding: 10%;
+}
+h1{
+  text-align: center;
+  color: brown;
+}
+.SW {
+    width: 250px;
+    height: 260px;
+    background-color: black;
+    border: 20px rgb(53, 52, 52) solid;
+    border-left: none;
+    border-right: none;
+    border-radius: 40px;
+    margin: auto;
+  }
+  
+  #firsttime{
+      color: white;
+      font-size: larger;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 5px;
+  }
+  
+  #secondtime{
+    color: white;
+    font-size:xx-large;
+    font-weight: bolder;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  #day{
+    color: white;
+    margin-top: 5px;
+    font-size: x-large;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .imgs{
+      margin-top: 75px;
+      display: flex;
+      justify-content: space-around;
+  }
+  .imgs>img{
+      width:40px;
+  }
