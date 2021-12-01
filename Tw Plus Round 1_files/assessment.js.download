@@ -1,0 +1,3795 @@
+//Global Declarations
+var url_param;
+var timeleft;
+var instructions;
+var test_data;
+var timestamp;
+var last_question_id;
+var paused;
+var selected_lang_id = undefined;
+var tab_switch_count = 0;
+var g_compile_status = 0;
+var full_screen_mode = false;
+var full_screen_exit_count = 0;
+var webcam_enabled = false;
+var webcam_activated = false;
+var g_action_log = {};
+var question_language_choice = {};
+var coding_languages = {
+    101: {
+        name: "BASH",
+        mode: "text/x-sh",
+        value: "",
+        id: 101,
+    },
+    102: {
+        name: "C#",
+        mode: "text/x-csharp",
+        value: "",
+        id: 102,
+    },
+    103: {
+        name: "Clojure",
+        mode: "text/x-clojure",
+        value: "",
+        id: 103,
+    },
+    104: {
+        name: "Common Lisp",
+        mode: "text/x-common-lisp",
+        value: "",
+        id: 104,
+    },
+    105: {
+        name: "Common Lisp (clisp)",
+        mode: "text/x-common-lisp",
+        value: "",
+        id: 105,
+    },
+    106: {
+        name: "Erlang",
+        mode: "text/x-erlang",
+        value: "",
+        id: 106,
+    },
+    107: {
+        name: "F#",
+        mode: "text/x-fsharp",
+        value: "",
+        id: 107,
+    },
+    108: {
+        name: "Go",
+        mode: "text/x-go",
+        value: "",
+        id: 108,
+    },
+    109: {
+        name: "Haskell",
+        mode: "text/x-haskell",
+        value: "",
+        id: 109,
+    },
+    110: {
+        name: "JavaScript (rhino)",
+        mode: "text/javascript",
+        value: "",
+        id: 110,
+    },
+    111: {
+        name: "JavaScript (spidermonkey)",
+        mode: "text/javascript",
+        value: "",
+        id: 111,
+    },
+    112: {
+        name: "Kotlin",
+        mode: "text/x-java",
+        value: "",
+        id: 112,
+    },
+    113: {
+        name: "Objective-C",
+        mode: "text/x-objectivec",
+        value: "",
+        id: 113,
+    },
+    114: {
+        name: "Perl",
+        mode: "text/x-perl",
+        value: "",
+        id: 114,
+    },
+    115: {
+        name: "PHP",
+        mode: "text/x-php",
+        value: "",
+        id: 115,
+    },
+    116: {
+        name: "R",
+        mode: "text/x-rsrc",
+        value: "",
+        id: 116,
+    },
+    117: {
+        name: "Ruby",
+        mode: "text/x-ruby",
+        value: "",
+        id: 117,
+    },
+    118: {
+        name: "Scala",
+        mode: "",
+        value: "",
+        id: 118,
+    },
+    119: {
+        name: "SQL",
+        mode: "text/x-sql",
+        value: "",
+        id: 119,
+    },
+    120: {
+        name: "Swift",
+        mode: "text/x-swift",
+        value: "",
+        id: 120,
+    },
+    121: {
+        name: "VB.NET",
+        mode: "text/x-vb",
+        value: "",
+        id: 121,
+    },
+    122: {
+        name: "Node.js",
+        mode: "text/javascript",
+        value: "",
+        id: 122,
+    },
+    1: {
+        name: "C",
+        mode: "text/x-csrc",
+        value:
+            "#include <stdio.h>\n" +
+            "int main()\n" +
+            "{\n" +
+            "   // Try out your code here\n" +
+            '   printf("Hello, World!");\n' +
+            "   return 0;\n" +
+            "}",
+        id: 1,
+    },
+    2: {
+        name: "C++",
+        mode: "text/x-c++src",
+        value:
+            "#include <iostream>\n" +
+            "using namespace std;\n" +
+            "\n" +
+            "int main() \n" +
+            "{\n" +
+            "   // Try out your code here\n" +
+            '    cout << "Hello, World!";\n' +
+            "    return 0;\n" +
+            "}",
+        id: 2,
+    },
+    6: {
+        name: "Java 7",
+        mode: "text/x-java",
+        value:
+            "class Main\n" +
+            "{\n" +
+            "  public static void main(String args[])\n" +
+            "  {\n" +
+            "    //Try out your code here\n" +
+            '    System.out.println("Hello World!");\n' +
+            "  }\n" +
+            "}",
+        id: 6,
+    },
+    3: {
+        name: "Java 8",
+        mode: "text/x-java",
+        value:
+            "class Main\n" +
+            "{\n" +
+            "  public static void main(String args[])\n" +
+            "  {\n" +
+            "    //Try out your code here\n" +
+            '    System.out.println("Hello World!");\n' +
+            "  }\n" +
+            "}",
+        id: 3,
+    },
+    4: {
+        name: "Python 2",
+        mode: "text/x-python",
+        value: "",
+        id: 4,
+    },
+    5: {
+        name: "Python 3.3",
+        mode: "text/x-python",
+        value: "",
+        id: 5,
+    },
+    7: {
+        name: 'Python 3.9',
+        mode: 'text/x-python',
+        value: "",
+        id: 7
+    },
+    10: {
+        name: 'JavaScript (Nodejs)',
+        mode: 'text/javascript',
+        value: "console.log(\"Hello World\")",
+        id: 10
+    }
+};
+var coding_editor;
+var timeago;
+var sectional_timeleft;
+var current_section = "";
+// navbar for mobiles
+var bool = 1;
+var question_parent_no_map = {};
+
+function openNav() {
+    if (bool == 1) {
+        $(".sidebar").removeClass("animated fadeOutLeft zero_width");
+        $(".sidebar").addClass("animated fadeInRight col-xs-12 col-sm-12");
+
+        bool = 0;
+    } else {
+        $(".sidebar").addClass("animated fadeOutLeft zero_width");
+        $(".sidebar").removeClass("animated fadeInRight col-xs-12 col-sm-12");
+
+        bool = 1;
+    }
+}
+
+//On Page Opening
+$(function () {
+    //Fetch Instance ID from URL
+    url_param = fetch_url_param();
+    if (url_param != undefined) {
+        fetch_instructions();
+    } else {
+        error_response(404);
+    }
+});
+
+//Fetch instance id from URL
+function fetch_url_param() {
+    var url = window.location.href;
+    var list = url.split("/");
+    var id;
+    var next = false;
+    $.each(list, function (k, v) {
+        if (next) {
+            id = v;
+            return false;
+        }
+        if (v == "assessment") {
+            next = true;
+        }
+    });
+    return id;
+}
+
+//Fetching Instructions
+function fetch_instructions() {
+    function setInstructions(instructions) {
+        //Setting Instructions only if already not set
+        if (timestamp === undefined) {
+            var test_status = instructions.test_status !== undefined ? instructions.test_status : 0;
+            var instructions_modal = $(".clone-block .instruction-clone .instruction").clone();
+            instructions_modal.find(".modal-title").empty().append(instructions.test_name);
+            $("title").empty().append(instructions.test_name);
+            //Checking for general instructions
+            {
+                var show_general = false;
+                if (instructions.general_ins !== undefined) {
+                    $.each(instructions.general_ins, function (k, v) {
+                        show_general = true;
+                        if (k < 2)
+                            instructions_modal
+                                .find(".general-instructions .general_ins_list")
+                                .append("<li>" + v + "</li>");
+                        else {
+                            /* adding see more button */
+                            if (k == 2)
+                                instructions_modal
+                                    .find(".general-instructions .general_ins_list")
+                                    .append('<h4 class="see_more_btn ">See More</h4>');
+                            instructions_modal
+                                .find(".general-instructions .general_ins_list")
+                                .append("<li class='see_more hidden'>" + v + "</li>");
+                        }
+                    });
+                }
+                if (show_general) {
+                    instructions_modal.find(".general-instructions").removeClass("hidden");
+                } else {
+                    instructions_modal.find(".general-instructions").addClass("hidden");
+                }
+            }
+            /* see more button */
+            instructions_modal.find(".general-instructions .see_more_btn").click(function () {
+                $(this).addClass("hidden");
+                instructions_modal
+                    .find(".general-instructions .general_ins_list .see_more")
+                    .removeClass("hidden");
+            });
+            //Setting Specific Instructions
+            {
+                //Setting Duration
+                if (instructions.duration !== undefined && instructions.duration != -1) {
+                    var test_duration = instructions.duration;
+                    instructions_modal.find(".general-info .duration .value").empty()	
+                    .append(secondsToDhms(test_duration, true));	
+                }
+
+                instructions_modal.find(".general-info .total-marks .value").empty()	
+                .append(instructions.total_marks !== undefined ? instructions.total_marks : "-");	
+
+                instructions_modal.find(".general-info .no-of-questions .value").empty()	
+                .append(instructions.total_questions !== undefined? instructions.total_questions : "-");	
+
+                instructions_modal.find(".general-info .difficulty .value").empty()	
+                .append(instructions.difficulty !== undefined ? instructions.difficulty : "-");
+
+                //Proctoring for invigilation
+                if (instructions.tab_restrict)
+                    instructions_modal.find(".important-instructions").removeClass("hidden") &&
+                        instructions_modal
+                            .find(".important-instructions .tab_restrict_ins")
+                            .removeClass("hidden");
+
+                if (!instructions.tab_restrict && instructions.full_screen_mode)
+                    instructions_modal.find(".important-instructions").removeClass("hidden") &&
+                        instructions_modal
+                            .find(".important-instructions .full_screen_ins")
+                            .removeClass("hidden");
+
+                if (instructions.webcam_enabled) {
+                    webcam_enabled = true;
+                    instructions_modal.find(".important-instructions").removeClass("hidden") &&
+                        instructions_modal
+                            .find(".important-instructions .webcam_ins, .important-instructions .webcam_access_block")
+                            .removeClass("hidden");
+                    instructions_modal.find(".important-instructions #enable-webcam-btn")
+                        .click(function () {
+                            init_webcam();
+                        })
+                }
+                //Setting Sections, Marking Scheme and number of questions
+                // var index = 0;
+                // var total_questions = 0;
+                // $.each(instructions.sections, function (k, v) {
+                //     // SECTION DATA CLONE
+                //     let section_data_clone = $(
+                //         ".clone-block .instruction-clone .section_data"
+                //     ).clone();
+                //     //Section
+                //     // var section = $('.clone-block .instruction-clone .section-field').clone();
+                //     section_data_clone.find(".section-field").append(v.name);
+                //     section_data_clone.find(".section-field").empty().append(v.name);
+                //     //Marking Scheme
+                //     // var marking = $('.clone-block .instruction-clone .marking').clone();
+                //     section_data_clone
+                //         .find(".marking .pos")
+                //         .empty()
+                //         .append("+" + instructions.marking_scheme[k]["correct"]);
+                //     section_data_clone
+                //         .find(".marking .zero")
+                //         .empty()
+                //         .append(instructions.marking_scheme[k]["unanswered"]);
+                //     section_data_clone
+                //         .find(".marking .neg")
+                //         .empty()
+                //         .append("-" + instructions.marking_scheme[k]["incorrect"]);
+                //     if (index > 0) {
+                //         //For UI Formating
+                //         // instructions_modal.find('.sec .section-values').append("----");
+                //         // instructions_modal.find('.marks .marking-schemes').append("    ");
+                //         instructions_modal.find(".Quesno .question-nums").append(" + ");
+                //         instructions_modal.find(".sectional_duration .sec_time").append(" + ");
+                //     }
+                //     // instructions_modal.find('.section-values').append(section);
+                //     // instructions_modal.find('.section-number').append("Section "+(index+1));
+
+                //     // instructions_modal.find('.marking-schemes').append(marking);
+                //     instructions_modal.find(".section_data_wrapper").append(section_data_clone);
+                //     //Number of Question
+                //     instructions_modal
+                //         .find(".Quesno .question-nums")
+                //         .append(instructions.no_of_ques[k]);
+                //     if (
+                //         instructions.sectional_duration != undefined &&
+                //         instructions.sectional_duration[k] != -1
+                //     ) {
+                //         instructions_modal
+                //             .find(".sectional_duration .sec_time")
+                //             .append(instructions.sectional_duration[k] / 60 + " ");
+                //         instructions_modal.find(".sectional_duration").removeClass("hidden");
+                //     }
+                //     total_questions = total_questions + instructions.no_of_ques[k];
+                //     index++;
+                // });
+                // if (index > 1) {
+                //     instructions_modal.find(".Quesno .question-nums").append(" = ");
+                //     instructions_modal
+                //         .find(".sectional_duration .sec_time")
+                //         .append(" = " + instructions.duration / 60);
+
+                //     instructions_modal.find(".Quesno .question-nums").append(total_questions);
+                // }
+                instructions_modal.find(".specific-instructions").removeClass("hidden");
+            }
+
+            var test_init_timer = instructions_modal.find(".modal-date.col-md-3 .test_init_timer");
+            timestamp = instructions.timestamp;
+            syncTimeStamp();
+            var curr_date = new Date(timestamp * 1000);
+            // set current date
+            var months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "June",
+                "July",
+                "Aug",
+                "Sept",
+                "Oct",
+                "Nov",
+                "Dec",
+            ];
+            instructions_modal
+                .find(".date")
+                .empty()
+                .append(curr_date.getDate() + " " + months[curr_date.getMonth()]);
+            instructions_modal.find(".year").empty().append(curr_date.getFullYear());
+            //set test start and expiry date
+            if (
+                instructions.start_date != undefined &&
+                instructions.start_date != -1 &&
+                instructions.start_date > timestamp
+            ) {
+                var test_time = instructions.start_date;
+                var diff = test_time - timestamp;
+                var end_time = -1;
+                if (
+                    instructions.end_date != undefined &&
+                    instructions.end_date != -1 &&
+                    instructions.end_date > timestamp
+                )
+                    end_time = instructions.end_date;
+                test_timer(instructions_modal, test_init_timer, diff, end_time, true);
+            } else if (
+                instructions.end_date != undefined &&
+                instructions.end_date != -1 &&
+                instructions.end_date >= timestamp
+            ) {
+                var end_time = instructions.end_date;
+                var diff = end_time - timestamp;
+                test_timer(instructions_modal, test_init_timer, diff, -1, false);
+            } else if (
+                instructions.end_date != undefined &&
+                instructions.end_date != -1 &&
+                instructions.end_date < timestamp
+            ) {
+                instructions_modal.find("#proctercheck").attr("disabled", true);
+                test_init_timer.find(".timer-msg").html("Test Expired.");
+                test_init_timer.find(".timer").html("");
+                test_init_timer.find(".alarm").addClass("hidden");
+                test_init_timer.removeClass("hidden");
+            } else {
+                instructions_modal.find("#proctercheck").removeAttr("disabled");
+            }
+            $("#instructionModal").empty().append(instructions_modal);
+            $.each(instructions.sections, function (k, v) {	
+                var content_row = $("#instructionModal .content-row-clone").clone();	
+                content_row.removeClass("content-row-clone");	
+                content_row.removeClass("hidden");	
+                content_row.addClass("content-row");	
+                content_row.find(".section").append(`<p class='section_head'>${v.name}</p>`);	
+                content_row.find(".totalques").append(`<p class='section_head'>${instructions.no_of_ques[k]}</p>`);	
+                content_row.find(".correctans").append(`<p class='section_head'>+${instructions.marking_scheme[k]["correct"]}</p>`);	
+                content_row.find(".incorrectans").append(`<p class='section_head'>-${instructions.marking_scheme[k]["incorrect"]}</p>`);	
+                content_row.find(".unans").append(`<p class='section_head'>${instructions.marking_scheme[k]["unanswered"]}</p>`);	
+                $("#instructionModal .main_grid").append(content_row);	
+            });
+            // if($('#instructionModal .general_ins_list').prop('scrollHeight') > 91){
+            //     $('#instructionModal .see_more').removeClass('hidden').click(function () {
+            //         $('#instructionModal .general_ins_list').removeClass('see_less');
+            //     });
+
+            // if($(window).width()< 769){
+            //     $('#instructionModal .modal-content .modal-date .test-time').addClass('col-xs-4');
+            //     $('#instructionModal .modal-content .modal-date .test_init_timer').addClass('col-xs-8');
+            //
+            //
+            // }
+            // $('#instructionModal .general_ins_list').readmore({
+            //     speed: 75,
+            //     lessLink: '<a href="#">Read less</a>',
+            //     collapsedHeight:91
+            // });
+
+            $("#instructionModal").find(".close").hide();
+            $("#proctercheck").click(function () {
+                // Check for ip restrictions
+                $.ajax({
+                    url: g_api_url + "test/ip/check/",
+                    type: "POST",
+                    headers: {
+                        Authorization: fetch_user_token(),
+                    },
+                    data: {
+                        url_param: url_param,
+                    },
+                    dataType: "json",
+                    success: function (json) {
+                        if (json.status == 1 || json.status == true) {
+                            if ((webcam_enabled && webcam_activated) || (!webcam_enabled && !webcam_activated)) {
+                                $("#instructionModal").modal("toggle");
+                                if (instructions.full_screen_mode === true) {
+                                    activate_full_screen();
+                                    full_screen_exit_count++;
+                                    // increaseWarnCount();
+                                }
+
+                                if (instructions.webcam_enabled === true) {
+                                    init_webcam();
+                                }
+                                proctor(instructions);
+                            } else {
+                                show_toast(
+                                    'warning',
+                                    'Caution',
+                                    'Please enable webcam to begin your assessment!'
+                                );
+                            }
+                        } else {
+                            show_toast("error", "You are accessing this test from an unauthorized network. Reach out to your staff for more info.", "");
+                        }
+                    },
+                    error: function (e) {
+                        error_response(e);
+                    },
+                });
+            });
+        }
+    }
+
+    //Fetches Instructions, Time when test Starts, the marking scheme etc
+    function test_timer(
+        instructions_modal_template,
+        test_init_timer,
+        diff,
+        end_time,
+        isStartTimer
+    ) {
+        instructions_modal_template.find("#proctercheck").attr("disabled", true);
+        if (isStartTimer) {
+            test_init_timer.find(".timer-msg").html("Test starts in:");
+        } else {
+            test_init_timer.find(".timer-msg").html("Test expires in:");
+        }
+        var setTimer = setInterval(function () {
+            if (!isStartTimer) {
+                instructions_modal_template.find("#proctercheck").removeAttr("disabled");
+            }
+            if (diff <= 0) {
+                clearInterval(setTimer);
+                if (end_time !== -1 && end_time > timestamp) {
+                    test_init_timer.addClass("hidden");
+                    test_timer(
+                        instructions_modal_template,
+                        test_init_timer,
+                        end_time - timestamp,
+                        -1,
+                        false
+                    );
+                } else test_init_timer.addClass("hidden");
+                if (!isStartTimer) {
+                    instructions_modal_template.find("#proctercheck").attr("disabled", true);
+                    test_init_timer.find(".timer-msg").html("Test Expired.");
+                    test_init_timer.find(".timer").html("");
+                    test_init_timer.find(".alarm").addClass("hidden");
+                    test_init_timer.removeClass("hidden");
+                } else {
+                    instructions_modal_template.find("#proctercheck").removeAttr("disabled");
+                }
+            }
+            if (test_data !== undefined) {
+                clearInterval(setTimer);
+                test_init_timer.addClass("hidden");
+            }
+            test_init_timer.find(".timer").html(secondsToDhms(diff, true));
+            test_init_timer.removeClass("hidden");
+            diff--;
+        }, 1000);
+    }
+
+    function init_proctor() {
+        $("#confirmation_form input").on("mouseup", function (e) {
+            $(this).select();
+            return false;
+        });
+        $("#confirmation_form input").keyup(function (e) {
+            if (e.which == 8 || e.which == 46 || e.which == 37) {
+                $(this).prev("input").focus();
+            } else if (e.which == 13) proctorSubmit();
+            else {
+                /*get value*/
+                var code = $(this).val();
+                code = code.trim();
+                if (code.length === 6) {
+                    code = code.split("");
+                    $("#confirmation_form input[name='n1']").val(code[0]);
+                    $("#confirmation_form input[name='n2']").val(code[1]);
+                    $("#confirmation_form input[name='n3']").val(code[2]);
+                    $("#confirmation_form input[name='n4']").val(code[3]);
+                    $("#confirmation_form input[name='n5']").val(code[3]);
+                    $("#confirmation_form input[name='n6']").val(code[3]);
+                }
+                if (code != "") $(this).next("input").focus();
+            }
+        });
+    }
+
+    //checks for proctor if not then redirects to test_init
+    function proctor(instructions) {
+        if (instructions.proctor == true) {
+            init_proctor();
+            $("#instructionModal").modal("hide");
+            $("#procter").modal(
+                {
+                    backdrop: "static",
+                    keyboard: false,
+                },
+                "toggle"
+            );
+            $("#test_init").click(function () {
+                proctorSubmit();
+            });
+        } else {
+            test_init();
+        }
+    }
+
+    $.ajax({
+        url: g_api_url + "test/instructions/",
+        type: "POST",
+        headers: {
+            Authorization: fetch_user_token(),
+        },
+        data: {
+            url_param: url_param,
+        },
+        dataType: "json",
+        success: function (json) {
+            if (json.status == 1) {
+                instructions = json;
+                var test_status =
+                    instructions.test_status !== undefined ? instructions.test_status : 0;
+                if (test_status == 2) {
+                    window.location = g_url + "platform/report/" + url_param + "/";
+                } else {
+                    setInstructions(instructions);
+                    if (test_status == 1) {
+                        if (instructions.full_screen_mode === true) {
+                            full_screen_mode = true;
+                            $("#termination_modal").modal("show");
+                        } else {
+                            $("#instructionModal").find(".close").hide();
+                            //Open Instructions Modal
+                            $("#instructionModal").modal(
+                                {
+                                    backdrop: "static",
+                                    keyboard: false,
+                                },
+                                "toggle"
+                            );
+                            $(".btn_start").addClass("hidden");
+                            $(".btn_resume").removeClass("hidden");
+
+                            $(".btn_resume").click(function () {
+                                //Close Instructions Modal
+                                $("#instructionModal").modal("toggle");
+                                $("#instructionModal").find(".close").show();
+                                $(".btn_resume").addClass("hidden");
+                            })
+                        }
+                        if(instructions.webcam_enabled === true) {
+                            init_webcam();
+                        }
+                        //Test Started
+                        test_init();
+                    } else {
+                        //Open Instructions Modal
+                        $("#instructionModal").modal(
+                            {
+                                backdrop: "static",
+                                keyboard: false,
+                            },
+                            "toggle"
+                        );
+                    }
+                }
+                $(".loader").addClass("hidden");
+            } else {
+                console.log(json);
+                // gotoError()
+                error_response(403);
+            }
+        },
+        error: function (e) {
+            error_response(e);
+        },
+    });
+    $("#termination_modal .resume_test_btn").click(function () {
+        $("#termination_modal").modal("hide");
+        activate_full_screen();
+        if (full_screen_mode) {
+            test_init();
+        }
+        full_screen_mode = false;
+        full_screen_exit_count++;
+        increaseWarnCount();
+    });
+    $("#termination_modal .end_test_btn").click(function () {
+        submitTest();
+    });
+}
+
+//proctor code submit api call
+function proctorSubmit() {
+    var queryString = $("#confirmation_form").serialize();
+
+    queryString = queryString.replace(new RegExp("&", "g"), "");
+    queryString = queryString.replace(new RegExp("=", "g"), "");
+    queryString = queryString.replace(new RegExp("n1", "g"), "");
+    queryString = queryString.replace(new RegExp("n2", "g"), "");
+    queryString = queryString.replace(new RegExp("n3", "g"), "");
+    queryString = queryString.replace(new RegExp("n4", "g"), "");
+    queryString = queryString.replace(new RegExp("n5", "g"), "");
+    queryString = queryString.replace(new RegExp("n6", "g"), "");
+    // console.log(queryString);
+    $.ajax({
+        url: g_api_url + "test/proctor/check/",
+        type: "POST",
+        headers: {
+            Authorization: fetch_user_token(),
+        },
+        data: {
+            code: queryString,
+            url_param: url_param,
+        },
+        dataType: "json",
+        success: function (json) {
+            if (json.status == 1) {
+                test_init();
+                $("#procter").modal("hide");
+            } else {
+                // show_toast("failure", "Not Authorised!", "");
+                show_toast("failure", "Error", json.msg);
+            }
+        },
+        error: function (e) {
+            console.log("error");
+            error_response(e);
+        },
+    });
+}
+
+//Initializing Test
+function test_init() {
+    function pausable() {
+        //script to make test pausable
+        $(".pause_exam").css("display", "block");
+    }
+
+    function cant_copy() {
+        //script to disallow copy paste while test
+        console.log("wert");
+        var ctrlDown = false,
+            ctrlKey = 17,
+            cmdKey = 91,
+            vKey = 86,
+            cKey = 67;
+
+        $(document)
+            .keydown(function (e) {
+                if (e.keyCode == ctrlKey || e.keyCode == cmdKey) {
+                    ctrlDown = true;
+                }
+            })
+            .keyup(function (e) {
+                if (e.keyCode == ctrlKey || e.keyCode == cmdKey) {
+                    ctrlDown = false;
+                }
+            });
+        $("body").keydown(function (e) {
+            if (ctrlDown && (e.keyCode == vKey || e.keyCode == cKey)) {
+                console.log("warn_user");
+                return false;
+            }
+        });
+    }
+
+    function tab_warn(max_switch_count) {
+        // window.onbeforeunload = confirmExit;
+        // function confirmExit()
+        // {
+        //     return "Do you want to leave this page without saving?";
+        // }
+        $(window).blur(function () {
+            if (max_switch_count - 1 === tab_switch_count) submitTest(false, 1, 1);
+            else {
+                if (max_switch_count - 1 === tab_switch_count)
+                    alert(
+                        "Tab/Window switching is not allowed. If you try doing it again, your test will be terminated."
+                    );
+                else alert("Tab/Window switching is not allowed. If you try doing it again, your test will be terminated.");
+                tab_switch_count++;
+                increaseWarnCount();
+            }
+        });
+    }
+
+    $.ajax({
+        url: g_api_url + "test/init/",
+        type: "POST",
+        headers: {
+            Authorization: fetch_user_token(),
+        },
+        data: {
+            url_param: url_param,
+        },
+        dataType: "json",
+        success: function (json) {
+            if (json.status == 1) {
+                var instructions_init = json.settings;
+                if (instructions_init.pause === true) {
+                    pausable();
+                }
+                if (instructions_init.cp_flag === true) {
+                    cant_copy();
+                }
+                if (instructions_init.tab_switching === true) {
+                    tab_warn(instructions_init.max_tab_switch_count);
+                }
+                if(instructions_init.webcam_enabled === true && 
+                    webcam_activated === true) {
+                    setTimeout(function () {
+                        take_snapshot();
+                    }, 3000)
+                    setInterval(function () {
+                        take_snapshot();
+                    }, 120 * 1000);
+                }
+
+                check_storage();
+                fetch_test();
+            } else {
+                show_toast("failure", json.msg, "");
+            }
+        },
+        error: function (e) {
+            console.log("error");
+            error_response(e);
+        },
+    });
+}
+
+//Fetching Test
+function fetch_test() {
+    $.ajax({
+        url: g_api_url + "test/fetch/",
+        type: "POST",
+        headers: {
+            Authorization: fetch_user_token(),
+        },
+        data: {
+            url_param: url_param,
+        },
+        dataType: "json",
+        success: function (json) {
+            if (json.status == 1) {
+                if (test_data == undefined && json.end_time == undefined) {
+                    test_data = json;
+                    timeleft = test_data.time_left;
+                    timestamp = test_data.timestamp;
+                    findActiveSection(); //finding active section if sectional timing is true
+
+                    //Setting Test
+                    setTest(test_data);
+                    $('[data-toggle="tooltip"]').tooltip();
+                } else {
+                    error_response(404);
+                }
+            } else {
+                show_toast("failure", json.msg, "");
+            }
+        },
+        error: function (e) {
+            console.log(e);
+            // gotoError();
+            error_response(e);
+        },
+    });
+}
+
+//Setting up the test
+function setTest(test_data) {
+    if (test_data.pause_status == 1) {
+        pauseExam(1);
+        paused = 1;
+    } else {
+        paused = 0;
+    }
+    //Setting Sidebar
+    {
+        $(".sidebar .test-info .test_title")
+            .attr("title", instructions.test_name)
+            .empty()
+            .append(instructions.test_name.substr(0, 17));
+        // $('.sidebar .test-info .tooltiptext').empty().append((instructions.test_name));
+        $(".sidebar .sections_info .sections_container").empty();
+        var index = 1;
+        $.each(test_data.test_sections, function (k, v) {
+            var section = $(".clone-block .test_sets").clone();
+            var section_name = v.name.toUpperCase();
+            section.find(".section-name .sec_name").append(`${ section_name }`);
+
+            if (index == 1) section.addClass("section_one");
+            section.click(function () {
+                toggle_accordion(k);
+            });
+            section.attr("data-section-id", k);
+            section.find(".questions_numbers").empty();
+            let quesNumber = 1;
+            $.each(v.questions, function (key, value) {
+                // Check if question is of comprehension type
+                if (test_data.question_map[value].question_type === 9 && test_data.question_map[value].children !== undefined && test_data.question_map[value].children.length > 0) {
+                    question_parent_no_map[value] = [];
+                    // Add child questions of comprehension type
+                    test_data.question_map[value].children.forEach(childQId => {
+                        var ques_id = childQId;
+                        var question = $(".clone-block .ques_container").clone();
+                        question.attr("data-question-id", ques_id);
+                        question.attr("data-section-name", section_name);
+                        question.attr("data-section-id", k);
+                        if (quesNumber < 10) {
+                            quesNumber = "0" + quesNumber;
+                        }
+
+                        q_no = quesNumber;
+                        question.attr("data-question-num", quesNumber);
+                        question.find(".no").html(quesNumber);
+                        if (test_data.question_map[ques_id]['bookmark_status'] && test_data.question_map[ques_id].bookmark_status == 1) {
+                            question.find(".no").addClass("bookmarked");
+                        } if (test_data.question_map[ques_id].answered == true && test_data.practice_mode) {
+                            question.find(".no").addClass("correct");
+                        } else if (
+                            test_data.question_map[ques_id].answered == false &&
+                            test_data.practice_mode
+                        ) {
+                            question.find(".no").addClass("wrong");
+                        } else if (test_data.question_map[ques_id].user_ans != -1) {
+                            question.find(".no").addClass("answered");
+                        }
+                        var questext = test_data.question_map[ques_id].question_text;
+                        questext = questext.replace(/<\/?[^>]+(>|$)/g, "");
+                        if (test_data.question_map[ques_id].question_type == 5) {
+                            var fillups = test_data.question_map[ques_id].fillup_count;
+                            questext = replaceAll(questext, "@@fillup@@", fillups);
+                        }
+                        question.find(".text").empty().append(questext.substring(0, 29) + "...");
+
+                        question.find(".no").click(function () {
+                            // if (mediaStreams) {
+                            //     mediaStreams.forEach(stream => stream.getTracks().forEach(track => track.stop()));
+                            //     mediaStreams = [];
+                            // }
+                            var ques_id = question.attr("data-question-id");
+                            if (current_section != "") {
+                                //check if sectional timing is set
+                                //then check question being fetched is in active section
+                                if ($.inArray(ques_id, test_data.test_sections[current_section].questions) == -1) {
+                                    ques_id = undefined;
+                                    show_toast("warning", "Sorry,you can not navigate to other section", "");
+                                }
+                            }
+
+                            if (ques_id !== undefined) {
+                                fetchQuestion(ques_id, 0, 1);
+                            }
+                        });
+
+                        section.find(".question_numbers").append(question);
+                        question_parent_no_map[value].push(quesNumber);
+                        quesNumber++;
+                    });
+                } else {    // Question is of non-comprehension type
+                    var ques_id = value;
+                    var question = $(".clone-block .ques_container").clone();
+                    question.attr("data-question-id", ques_id);
+                    question.attr("data-section-name", section_name);
+                    question.attr("data-section-id", k);
+                    if (quesNumber < 10) {
+                        quesNumber = "0" + quesNumber;
+                    }
+
+                    q_no = quesNumber;
+                    question.attr("data-question-num", quesNumber);
+                    question.find(".no").html(quesNumber);
+                    if (test_data.question_map[ques_id]['bookmark_status'] && test_data.question_map[ques_id].bookmark_status == 1) {
+                        question.find(".no").addClass("bookmarked");
+                    } if (test_data.question_map[ques_id].answered == true && test_data.practice_mode) {
+                        question.find(".no").addClass("correct");
+                    } else if (
+                        test_data.question_map[ques_id].answered == false &&
+                        test_data.practice_mode
+                    ) {
+                        question.find(".no").addClass("wrong");
+                    } else if (test_data.question_map[ques_id].user_ans != -1) {
+                        question.find(".no").addClass("answered");
+                    }
+                    var questext = test_data.question_map[ques_id].question_text;
+                    questext = questext.replace(/<\/?[^>]+(>|$)/g, "");
+                    if (test_data.question_map[ques_id].question_type == 5) {
+                        var fillups = test_data.question_map[ques_id].fillup_count;
+                        questext = replaceAll(questext, "@@fillup@@", fillups);
+                    }
+                    question.find(".text").empty().append(questext.substring(0, 29) + "...");
+
+                    question.find(".no").click(function () {
+                        // if (mediaStreams) {
+                        //     mediaStreams.forEach(stream => stream.getTracks().forEach(track => track.stop()));
+                        //     mediaStreams = [];
+                        // }
+                        var ques_id = question.attr("data-question-id");
+                        if (current_section != "") {
+                            //check if sectional timing is set
+                            //then check question being fetched is in active section
+                            if ($.inArray(ques_id, test_data.test_sections[current_section].questions) == -1) {
+                                ques_id = undefined;
+                                show_toast("warning", "Sorry,you can not navigate to other section", "");
+                            }
+                        }
+
+                        if(ques_id !== undefined) {
+                            fetchQuestion(ques_id, 0, 1);
+                        }
+                    });
+
+                    section.find(".question_numbers").append(question);
+                    quesNumber++;
+                }
+            });
+            $(".sidebar .sections_info .sections_container").append(section);
+            index++;
+        });
+        $(".sidebar .test-info").removeClass("hidden");
+    }
+    //Find Current question id
+    if (test_data.current_question) question_id = test_data.current_question;
+    else {
+        question_id = test_data.test_sections[Object.keys(test_data.test_sections)[0]].questions[0];
+    }
+    //Setting Minimap
+    // $('.sidebar .test-info .qmap').click(function () {
+    //     minimapOpener();
+    // });
+    setTestClickListeners();
+    //Question Setup
+    fetchQuestion(question_id);
+    setTimer();
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+//Setting Test Clicks
+function setTestClickListeners() {
+    $(".next").click(function () {
+        nextQuestion();
+    });
+    $(".back").click(function () {
+        backQuestion();
+    });
+    window.addEventListener(
+        "blur",
+        function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            if (test_data != undefined) {
+                var systime = new Date();
+                var data = {
+                    focus_status: 0,
+                    server_time: timestamp,
+                    system_time: systime.getTime(),
+                };
+                actionListner("focus", data);
+            }
+
+            return false;
+        },
+        false
+    );
+    window.addEventListener(
+        "focus",
+        function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (test_data != undefined) {
+                var systime = new Date();
+                var data = {
+                    focus_status: 1,
+                    server_time: timestamp,
+                    system_time: systime.getTime(),
+                };
+                actionListner("focus", data);
+            }
+            return false;
+        },
+        false
+    );
+    $(".quit_exam").click(function () {
+        timesUp();
+    });
+    $(".pause_exam").click(function () {
+        if (paused == 0 || paused == undefined) {
+            var curr_question_id = $(".display-area .question-wrapper").attr("data-question-id");
+            var curr_timespent = test_data.question_map[curr_question_id].time_spent;
+            var systime = new Date();
+            var data = {
+                paused_status: 1,
+                question_id: curr_question_id,
+                time_spent: curr_timespent,
+                server_time: timestamp,
+                system_time: systime.getTime(),
+            };
+            //show modal
+            pauseExam(1);
+            //api call to pause test
+            actionListner("paused", data);
+        }
+    });
+    $(".resume_exam").click(function () {
+        if (paused == 1) {
+            var curr_question_id = $(".display-area .question-wrapper").attr("data-question-id");
+            var systime = new Date();
+            var data = {
+                paused_status: 0,
+                question_id: curr_question_id,
+                server_time: timestamp,
+                system_time: systime.getTime(),
+            };
+            //hide modal
+            pauseExam(0);
+            //api call to resume test
+            actionListner("paused", data);
+        }
+    });
+    $(".instructions_link").click(function () {
+        instructionModalOpener();
+    });
+    $("#test_summary .modal-footer .submit").click(function () {
+        submitTest(false, 1);
+    });
+    // register the handler for key bindings
+    document.addEventListener("keyup", doc_keyUp, false);
+    $("#submit_exam").click(function () {
+        timesUp();
+    });
+
+    $(".expandNav").click(function () {
+        openNav();
+    });
+    $(".keyboard").click(function () {
+        shortcuts();
+    });
+    setTimeout(actionAPI, randomIntFromInterval(3000, 10000));
+}
+
+//for next question call this function
+function nextQuestion(qid = -1) {
+    var id = $(".next").attr("data-question-id");
+    if (qid != -1) {
+        id = qid;
+    }
+    var c_q_id = $(".display-area .question-wrapper").attr("data-question-id");
+    if (current_section != "") {
+        //check if sectional timing is set
+        //then check question being fetched is in active section
+        if ($.inArray(id, test_data.test_sections[current_section].questions) == -1) {
+            id = c_q_id;
+            show_toast("warning", "Sorry,you can not navigate to other section", "");
+        }
+    }
+    if (id != undefined) {
+        fetchQuestion(id);
+    }
+}
+
+//open minimap
+function minimapOpener() {
+    setTestSummaryModal(1);
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $("#test_summary").modal("show");
+    $("#test_summary .modal-footer").hide();
+}
+
+//for back question call this function
+function backQuestion(qid = -1) {
+    var id = $(".back").attr("data-question-id");
+    if (qid != -1) {
+        id = qid;
+    }
+    var c_q_id = $(".display-area .question-wrapper").attr("data-question-id");
+    if (current_section != "") {
+        //check if sectional timing is set
+        //then check question being fetched is in active section
+        if ($.inArray(id, test_data.test_sections[current_section].questions) == -1) {
+            id = c_q_id;
+            show_toast("warning", "Sorry,you can not navigate to other section", "");
+        }
+    }
+    if (id != undefined) {
+        fetchQuestion(id);
+    }
+}
+
+//instruction modal open using this function
+function instructionModalOpener() {
+    $("#instructionModal").find("#proctercheck").addClass("hidden");
+    $("#instructionModal").find(".test_init_timer").addClass("hidden");
+    $("#instructionModal").find(".close").show();
+    $("#instructionModal").find(".keyboard").removeClass("hidden");
+    $("#instructionModal").modal(
+        {
+            backdrop: true,
+            keyboard: true,
+        },
+        "toggle"
+    );
+}
+
+//Setting test timer
+function setTimer() {
+    //time countdown
+    //just for this demo today + 7 days
+    if (timeleft == -1) {
+        $(".time").hide();
+    } else {
+        timer = setInterval(function () {
+            timeBetweenDates();
+            $(".time .alarm").show();
+            if (paused == 1) {
+            } else {
+                timeSpent();
+                timeleft--;
+                if (sectional_timeleft != undefined) {
+                    sectional_timeleft--;
+                }
+            }
+        }, 1000);
+        timer2 = setInterval(function () {
+            time_ago();
+        }, 5000);
+
+        function timeBetweenDates() {
+            if (timeleft == 600) {
+                $(".navbar .container .time").css("color", "red");
+                show_toast("warning", "Remainder", "Only 10 minutes left!", "2000");
+            }
+            if (sectional_timeleft <= 0) {
+                findActiveSection();
+            }
+            if (timeleft <= 0) {
+                // Timer done
+                submitTest();
+                clearInterval(timer);
+                clearInterval(timer2);
+                show_toast("failure", "Info", "Times Up !", "6000");
+            } else {
+                if (sectional_timeleft != undefined) {
+                    var regex = /(<([^>]+)>)/ig;
+                    var section_name = test_data.test_sections[current_section].name.replace(regex, "");
+                    if(current_section !== "" && section_name !== $("#sec_name").text())
+                        $("#sec_name").html("'" + section_name + "'");
+                    $("#sec_timing .time").html(secondsToDhms(sectional_timeleft, true));
+                    $(".sectional_time_info").removeClass("hidden");
+                } else {
+                    $("#test_timer").html(secondsToDhms(timeleft, true));
+                    $(".timer_wrapper").removeClass("hidden");
+                }
+            }
+        }
+    }
+}
+
+//Fetch Question with question id
+function fetchQuestion(question_id, reset = 0, sidebar = 0) {
+    function reset_question(question_id) {
+        test_data.question_map[question_id].user_ans = -1;
+        fetchQuestion(question_id, 1);
+        var q_active = $(
+            ".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]"
+        );
+        q_active.find(".no").removeClass("answered");
+    }
+
+    $(".sidebar .sections_info .ques_container .no").removeClass("active_question");
+    $(".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]")
+        .find(".no")
+        .addClass("active_question");
+    //Checking if its same question_id
+    var current_id = $(".display-area .question-wrapper").attr("data-question-id");
+    // if (question_id === current_id && reset == 0)
+    //     return;
+    last_question_id = current_id;
+    //To remove Matching Lines
+    LINES.destroyAll();
+    var question = $(".clone-block .question-wrapper").clone();
+    question.attr("data-question-id", question_id);
+    var sidebar_question = $(".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]");
+    var section_name = sidebar_question.attr("data-section-name");
+    var section_id = sidebar_question.attr("data-section-id");
+    var ques_no = sidebar_question.attr("data-question-num");
+    toggle_accordion(section_id);
+    var question_data = test_data.question_map[question_id];
+    var questext = "";
+    if (
+        typeof question_data !== "undefined" &&
+        typeof question_data.question_text !== "undefined"
+    ) {
+        questext = question_data.question_text;
+    }
+    if (test_data.question_map[question_id] !== undefined && 
+        test_data.question_map[question_id].question_type == 5) {
+        var fillups = test_data.question_map[question_id].fillup_count;
+        questext = replaceAll(questext, "@@fillup@@", fillups);
+    }
+    var question_type = question_data.question_type;
+    var reset_clone = $(".clone-block .question-clone .button-tooltip-clone .reset").clone();
+    if (test_data.practice_mode) {
+        if (question_data.answer_status == undefined || question_data.answer_status == -1) {
+            var question_submit = $(".clone-block .button-tooltip-clone .submit").clone();
+            question_submit.attr("disabled", true);
+            question
+                .find(".button-tooltip")
+                .removeClass("hidden")
+                .addClass("practice")
+                .append(question_submit);
+            question.find(".practice").click(function () {
+                extractUserResponse(question_id);
+                evaluateAns(question_id, 0);
+            });
+        }
+    }
+    //Adding bookmark listener
+    {
+        question.find(".info .b_mark").click(function () {
+            var q_active = $(
+                ".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]"
+            );
+            q_active.find(".no").hasClass("bookmarked")
+                ? q_active.find(".no").removeClass("bookmarked")
+                : q_active.find(".no").addClass("bookmarked");
+            var bookmark_status;
+            if (test_data.question_map[question_id].bookmark_status == 1) {
+                question
+                    .find(".info .b_mark .material-icons")
+                    .removeClass("b_mark_selected")
+                    .html("bookmark_border");
+                test_data.question_map[question_id].bookmark_status = 0;
+                q_active.find(".ques_container").removeClass("bookmarked");
+                bookmark_status = 0;
+            } else {
+                question
+                    .find(".info .b_mark .material-icons")
+                    .addClass("b_mark_selected")
+                    .html("bookmark");
+                test_data.question_map[question_id].bookmark_status = 1;
+                q_active.find(".ques_container").addClass("bookmarked");
+                bookmark_status = 1;
+            }
+            var data = {};
+            var systime = new Date();
+            data = {
+                question_id: question_id,
+                bookmark_status: bookmark_status,
+                time_spent: test_data.question_map[question_id].time_spent,
+                server_time: timestamp,
+                system_time: systime.getTime(),
+            };
+            if (test_data.question_map[question_id].answer_status != undefined)
+                data.answer_status = test_data.question_map[question_id].answer_status;
+            actionListner("toggle_bookmark", data);
+        });
+        if (question_data.bookmark_status == 1) {
+            question
+                .find(".info .b_mark .material-icons")
+                .html("bookmark")
+                .addClass("b_mark_selected");
+            $(".sidebar .sections .question[data-question-id=" + question_id + "]")
+                .find(".ques_status")
+                .addClass("bookmarked");
+        } else {
+            question
+                .find(".info .b_mark .material-icons")
+                .html("bookmark_border")
+                .removeClass("b_mark_selected");
+            $(".sidebar .sections .question[data-question-id=" + question_id + "]")
+                .find(".ques_status")
+                .removeClass("bookmarked");
+        }
+    }
+
+    //for question data
+    {
+        var question_box = question.find(".question-box");
+        var info_box = question.find(".info-box");
+        var marking_scheme = question.find(".marking-scheme");
+        question_box.find(".qno").html("QUESTION " + ques_no);
+        question_box.find(".question-title").removeClass("hidden");
+        // question_box.find(".badge").empty().append(section_name);
+        // question_box.find('.question-text').html(questext);
+        if (question_data.question_paragraph != undefined) {
+            var passage_box = question.find(".passage-box");
+            passage_box.removeClass("hidden")
+            if (question_parent_no_map[question_data['parent']] !== undefined && question_parent_no_map[question_data['parent']].length > 0) {
+                question_parent_no_map[question_data['parent']] = question_parent_no_map[question_data['parent']].sort()
+                let firstNo = question_parent_no_map[question_data['parent']][0];
+                let lastNo = question_parent_no_map[question_data['parent']][question_parent_no_map[question_data['parent']].length - 1];
+                passage_box.find(".title").html("Comprehension (Questions " + firstNo + "-" + lastNo + ")");
+            } else {
+                passage_box.find(".title").html("Comprehension (Question " + ques_no + ")");
+            }
+            passage_box.find(".passage").html(question_data.question_paragraph);
+            question_box.find(".question-text").removeClass("hidden").html(questext);
+        } else {
+            if ([3, 4].includes(question_type)) {
+                info_box.removeClass("hidden");
+                info_box.find(".dismiss-btn").click(function () {
+                    info_box.addClass("hidden");
+                });
+            }
+            question_box.find(".question-text").html(questext);
+        }
+
+        switch (question_type) {	
+            case 1: //MCQ	
+                question_box.find(".question-title").html("Select the correct answer");	
+                break;	
+            case 2: //MAQ	
+                question_box.find(".question-title").html("Select all the options that apply");	
+                break;	
+            case 3: //Rearrange	
+                info_box.find(".info-text").html("Click and drag an option to rearrange");	
+                question_box.find(".question-title").html("Arrange in the correct sequence");	
+                break;	
+            case 4: //Matching	
+                info_box.find(".info-text").html("Click on an option from one column and then click on an option from the other column to match");	
+                question_box.find(".question-title").html("Match the following");	
+                break;	
+            case 5: //Fillups	
+                question_box.find(".question-title").html("Fill in the blank(s). Enter your answer against the respective blank number");	
+                break;	
+            case 6: //Integer Type	
+                question_box.find(".question-title").html("Enter your response as an integer ONLY.");	
+                break;	
+            case 7: //Audio Type	
+                question_box.find(".question-title").html("Audio response (Max. allowed " + question_data.time_limit + "s)");	
+                break;	
+            case 8: //Video Type	
+                question_box.find(".question-title").html("Video response (Max. allowed " + question_data.time_limit + "s)");	
+                break;	
+            case 10: //Coding Type	
+                question_box.find(".question-title").addClass("hidden");	
+                break;	
+            case 11: //Essay	
+                question_box.find(".question-title").html("Type out your response to the following question  in less than [" + question_data.word_limit + "] words.");	
+                break;	
+            default:	
+                break;	
+        }
+
+        if(question_data.marking_scheme) {
+            marking_scheme.removeClass("hidden");
+            marking_scheme.find(".correct").html(question_data.marking_scheme.correct > 0 ? "+" + question_data.marking_scheme.correct : "0" );
+            marking_scheme.find(".unanswered").html(question_data.marking_scheme.unanswered > 0 ? "-" + question_data.marking_scheme.unanswered : "0");
+            marking_scheme.find(".incorrect").html(question_data.marking_scheme.incorrect > 0 ? "-" + question_data.marking_scheme.incorrect : "0");
+        }
+    }
+    switch (question_type) {
+        case 1: //MCQ
+            var i = 0;
+            var option_flag = 0;
+            $.each(question_data.options, function (k, v) {
+                var option = $(".clone-block .mcqoption .outside").clone();
+                if (i == 0) {
+                    option.addClass("one");
+                    i = 1;
+                } else {
+                    option.addClass("two");
+                    i = 0;
+                }
+                option.find(".option_text").attr("option_id", k).html(v);
+                if (question_data.answer_status == undefined || question_data.answer_status < 0) {
+                    option.click(function () {
+                        var q_active = $(
+                            ".sidebar .sections_info .ques_container[data-question-id=" +
+                                question_id +
+                                "]"
+                        );
+                        q_active.find(".no").addClass("answered");
+                        if (!(test_data.question_map[question_id].answered != undefined)) {
+                            if (!option.find(".inside").hasClass("option_active")) {
+                                $(
+                                    ".display-area .question-wrapper .answer-box.mcqoption .inside"
+                                ).removeClass("option_active");
+                                var iconreset = $(
+                                    ".display-area .question-wrapper .answer-box.mcqoption .inside .rad"
+                                );
+                                for (var i = 0; i < iconreset.length; i++) {
+                                    $(iconreset[i]).html("radio_button_unchecked");
+                                }
+                                option.find(".rad").html("radio_button_checked");
+                                option.find(".inside").addClass("option_active");
+                                extractUserResponse(question_id);
+                                $(".display-area .button-tooltip").removeClass("hidden");
+                                $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                            }
+                        }
+                    });
+                } else {
+                    if (k == question_data.solution[0]) {
+                        option.find(".inside").addClass("correct");
+                        if (question_data.answer_status == 1) {
+                            //correct
+                            option.find("rad").html("radio_button_checked");
+                        }
+                    } else if (k == question_data.user_ans[0]) {
+                        option.find("rad").html("radio_button_checked");
+                        option.find(".inside").addClass("wrong");
+                    }
+                }
+                if (option[0].innerText.trim().length > 55) {
+                    option_flag = 1;
+                }
+                question.find(".answer-box").addClass("mcqoption").append(option);
+            });
+            if (option_flag == 1)
+                question
+                    .find(".answer-box.mcqoption")
+                    .find(".outside")
+                    .removeClass("col-md-6")
+                    .addClass("col-md-12")
+                    .removeClass("one")
+                    .removeClass("two");
+            break;
+        case 2: //MAQ
+            var i = 0;
+            var option_flag = 0;
+            $.each(question_data.options, function (k, v) {
+                var option = $(".clone-block .maqoption .outside").clone();
+                if (i == 0) {
+                    option.addClass("one");
+                    i = 1;
+                } else {
+                    option.addClass("two");
+                    i = 0;
+                }
+                option.find(".option_text").attr("option_id", k).html(v);
+                if (question_data.answer_status == undefined || question_data.answer_status < 0) {
+                    option.click(function () {
+                        var q_active = $(
+                            ".sidebar .sections_info .ques_container[data-question-id=" +
+                                question_id +
+                                "]"
+                        );
+                        q_active.find(".no").addClass("answered");
+                        if (!(test_data.question_map[question_id].answered != undefined)) {
+                            var test = option.find(".rad").html().trim();
+                            if (test == "check_box_outline_blank") {
+                                option.find(".rad").html("check_box");
+                                option.find(".inside").addClass("option_active");
+                            } else {
+                                option.find(".rad").html("check_box_outline_blank");
+                                option.find(".inside").removeClass("option_active");
+                            }
+                            extractUserResponse(question_id);
+                            $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                        }
+                    });
+                } else {
+                    if (question_data.solution.includes(k)) {
+                        if (question_data.user_ans.includes(k)) {
+                            option.find(".inside").addClass("correct");
+                            option.find("rad").html("check_box");
+                        } else {
+                            option.find(".inside").addClass("partial");
+                        }
+                    } else if (question_data.user_ans.includes(k)) {
+                        option.find("rad").html("check_box");
+                        option.find(".inside").addClass("wrong");
+                    }
+                }
+                if (option[0].innerText.trim().length > 55) {
+                    option_flag = 1;
+                }
+                question.find(".answer-box").addClass("maqoption").append(option);
+            });
+            if (option_flag == 1)
+                question
+                    .find(".answer-box.maqoption")
+                    .find(".outside")
+                    .removeClass("col-md-6")
+                    .addClass("col-md-12")
+                    .removeClass("one")
+                    .removeClass("two");
+            break;
+        case 3: //Rearrange
+            if (question_data.answer_status == undefined || question_data.answer_status < 0) {
+                $.each(question_data.options, function (k, v) {
+                    var option = $(".clone-block .rearrange .elem").clone();
+                    option
+                        .attr("option_id", v)
+                        .html(
+                            "<span>" +
+                                v +
+                                "</span>" +
+                                '<i class="tripledot material-icons">more_vert  </i>'
+                        );
+                    question.find(".answer-box").append(option);
+                });
+                question.find(".answer-box").sortable({
+                    update: function () {
+                        $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                        extractUserResponse(question_id);
+                    },
+                });
+            } else {
+                var wrong_answer_box;
+                if (question_data.answer_status == 0) {
+                    wrong_answer_box = $(".clone-block .question-wrapper .answer-box").clone();
+                    wrong_answer_box.addClass("wrong");
+                    $.each(question_data.user_ans, function (k, v) {
+                        var option = $(".clone-block .rearrange .elem").clone();
+                        option
+                            .attr("option_id", v)
+                            .html(
+                                "<span>" +
+                                    v +
+                                    "</span>" +
+                                    '<i class="tripledot material-icons">more_vert  </i>'
+                            );
+                        wrong_answer_box.append(option);
+                    });
+                }
+                var answer_box = $(".clone-block .question-wrapper .answer-box").clone();
+                answer_box.addClass("correct");
+                $.each(question_data.solution, function (k, v) {
+                    var option = $(".clone-block .rearrange .elem").clone();
+                    option
+                        .attr("option_id", v)
+                        .html(
+                            "<span>" +
+                                v +
+                                "</span>" +
+                                '<i class="tripledot material-icons">more_vert  </i>'
+                        );
+                    answer_box.append(option);
+                });
+                question.find(".answer-box").append(wrong_answer_box).append(answer_box);
+            }
+            question.find(".answer-box").addClass("rearrange");
+
+            break;
+        case 4: //Matching
+            question.find(".answer-box").addClass("matching");
+            var columnA = $(
+                ".clone-block .question-clone .answer-clone .matching .element-list"
+            ).clone();
+            var columnB = $(
+                ".clone-block .question-clone .answer-clone .matching .element-list"
+            ).clone();
+            columnA.addClass("columnA");
+            columnB.addClass("columnB");
+            $.each(question_data.options, function (k, v) {
+                var optionA = $(
+                    ".clone-block .question-clone .answer-clone .matching .match-option"
+                ).clone();
+                var optionB = $(
+                    ".clone-block .question-clone .answer-clone .matching .match-option"
+                ).clone();
+                optionA.attr("data-option", k).html(k);
+                optionB.attr("data-option", v).html(v);
+                columnA.append(optionA);
+                columnB.append(optionB);
+            });
+            question.find(".matching").append(columnA);
+            question.find(".matching").append(columnB);
+            break;
+        case 5: //Fillups
+            var fillups = question_data.fillup_count;
+            var options = $(".clone-block .fillintheblanks").clone();
+            options.empty();
+            for (var i = 0; i < fillups; i++) {
+                if (question_data.answer_status == undefined || question_data.answer_status < 0) {
+                    var option = $(".clone-block .fillintheblanks .row").clone();
+                    option.find(".serial").append("[" + (i + 1) + "]");
+                    option.find("input").attr("placeholder", "type your answer here");
+                    option.keyup(function (e) {
+                        if (e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Enter") {
+                            return false;
+                        }
+                    });
+                    options.append(option);
+                    option.find(".fill-up").focusout(function () {
+                        $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                        extractUserResponse(question_id);
+                    });
+                    option.find(".fill-up").focusin(function () {
+                        if (test_data.question_map[question_id].answered != undefined) {
+                            $(this).attr("disabled", true);
+                        }
+                    });
+                } else {
+                    if (question_data.answer_status == 0) {
+                        var option = $(".clone-block .fillintheblanks .row").clone();
+                        option.find(".serial").append("[" + (i + 1) + "]");
+                        option
+                            .find("input")
+                            .addClass("wrong")
+                            .attr("placeholder", "Type your answer here")
+                            .attr("disabled", true);
+                        options.append(option);
+                    }
+                    var option = $(".clone-block .fillintheblanks .row").clone();
+                    option.find(".serial").append("[" + (i + 1) + "]");
+                    option
+                        .find("input")
+                        .addClass("correct")
+                        .attr("placeholder", "Type your answer here")
+                        .val(question_data.solution[i])
+                        .attr("disabled", true);
+                    options.append(option);
+                }
+            }
+            question.find(".answer-box").addClass("fillintheblanks").append(options);
+            break;
+        case 6: //Integer Type
+            var options = $(".clone-block .fillintheblanks").clone();
+            options.empty();
+            if (question_data.answer_status == undefined || question_data.answer_status < 0) {
+                var option = $(".clone-block .fillintheblanks .row").clone();
+                option.find(".serial").addClass("hidden");
+                option.find("input").attr("placeholder", "Type your answer here");
+                option.find("input").attr("id", "intTextBox");
+                option.keyup(function (e) {
+                    if (e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Enter") {
+                        return false;
+                    }
+                });
+                options.append(option);
+                setInputFilter(option.find("input"), function (value) {
+                    return /^-?\d*$/.test(value);
+                });
+                option.find(".fill-up").focusout(function () {
+                    $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                    extractUserResponse(question_id);
+                });
+                option.find(".fill-up").focusin(function () {
+                    if (test_data.question_map[question_id].answered != undefined) {
+                        $(this).attr("disabled", true);
+                    }
+                });
+            } else {
+                if (question_data.answer_status == 0) {
+                    var option = $(".clone-block .fillintheblanks .row").clone();
+                    option.find(".serial").addClass("hidden");
+                    option
+                        .find("input")
+                        .addClass("wrong")
+                        .attr("placeholder", "Type your answer here")
+                        .attr("disabled", true);
+                    option.find("input").attr("id", "intTextBox");
+                    options.append(option);
+                }
+                var option = $(".clone-block .fillintheblanks .row").clone();
+                option.find(".serial").addClass("hidden");
+                option
+                    .find("input")
+                    .addClass("correct")
+                    .attr("placeholder", "Type your answer here")
+                    .val(question_data.solution)
+                    .attr("disabled", true);
+                option.find("input").attr("id", "intTextBox");
+                options.append(option);
+            }
+            question.find(".answer-box").addClass("fillintheblanks").append(options);
+            break;
+        case 7: //Audio
+            break;
+        case 8: //Video
+            break;
+        case 10: //Coding
+            var editor = $(".clone-block .coding_wrapper").clone();
+            question.find(".answer-box").append(editor);
+            var test_case_template = $(".clone-block .coding_tc_wrapper").clone();
+            for (var i = 0; i < test_data.question_map[question_id].test_cases.length; i++) {
+                var One_test_case = $(".clone-block .test_case_clones .tc_no_box").clone();
+                One_test_case.attr("data-tc", i);
+                One_test_case.html("Test Case " + (i + 1) + "<i class='material-icons'></i>");
+                test_case_template.find(".tc_wrapper").append(One_test_case);
+                var One_test_desc = $(".clone-block .test_case_clones .test_case_desc").clone();
+                One_test_desc.attr("data-tc", i);
+                One_test_desc.find(".input_tc").html(
+                    test_data.question_map[question_id].test_cases[i].in.replace(/\\n/g, "<br/>")
+                );
+                One_test_desc.find(".output_tc").html(
+                    test_data.question_map[question_id].test_cases[i].out.replace(/\\n/g, "<br/>")
+                );
+                test_case_template.find(".test_case_data").append(One_test_desc);
+            }
+            question.find(".answer-box").append(test_case_template);
+            
+            break;
+        case 11: //Essay
+            var essay_editor = $(".clone-block .essay").clone();
+            question.find(".answer-box").append(essay_editor);
+            essay_editor.find(".editor").focusout(function () {
+                if (!(test_data.question_map[question_id].answered != undefined))
+                    $(".display-area .button-tooltip .submit").removeAttr("disabled");
+                extractUserResponse(question_id);
+            });
+            essay_editor.find(".editor").keyup(function (e) {
+                if (e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Enter") {
+                    return false;
+                }
+            });
+            essay_editor.find(".editor").change(counter);
+            essay_editor.find(".editor").keydown(counter);
+            essay_editor.find(".editor").keypress(counter);
+            essay_editor.find(".editor").keyup(counter);
+            essay_editor.find(".editor").blur(counter);
+            essay_editor.find(".editor").focus(counter);
+            break;
+
+        default:
+        // code block
+    }
+
+    if (!test_data.practice_mode && (question_type == 1 || question_type == 4)) {
+        //Reset Button
+        reset_clone.click(function () {
+            reset_question(question_id);
+        });
+        question.find(".button-tooltip").append(reset_clone);
+    }
+    $(".display-area").empty().append(question);
+    if (question_type == 11) {
+        var quill = new Quill(".display-area .answer-box .essay .editor", {
+            theme: "snow",
+        });
+    } else if (question_type == 10) {
+        codeStart();
+        editor_initialise(question_data.default_lang, question_id, question_data.code_blocks);
+    } else if (question_type == 4) {
+        match(question_id);
+    }
+
+    $(".question-wrapper .explanation-box").addClass("hidden");
+    if (question_data.explanation_text != undefined && question_data.answer_status >= 0) {
+        var explanation1 = question_data.explanation_text;
+        $(".display-area .question-wrapper .explanation-box").html(explanation1);
+        if (explanation1 != "<p><br></p>") {
+            $(".display-area .question-wrapper .explanation-box").removeClass("hidden");
+        }
+    }
+    if (!test_data.practice_mode) {
+    }
+
+    setNavigation(question_id);
+    currentQuestionActive(question_id, sidebar);
+    retainUserAns(question_id);
+    if (reset == 1) {
+        extractUserResponse(question_id);
+    }
+    $(".playground").overlayScrollbars({
+        scrollbars: {
+            autoHide: "m",
+        },
+    });
+}
+
+//For making accordion active
+function toggle_accordion(section_id) {
+    if (current_section == "" || current_section == section_id) {
+        $(".sidebar .sections .section").removeClass("active");
+        $(".sidebar .sections .section[data-section-id=" + section_id + "]").addClass("active");
+    }
+}
+
+//Setting Navigation buttons
+function setNavigation(question_id) {
+    var questions = $(".sidebar .sections_info .ques_container");
+    var index = 0;
+    questions.each(function (k, v) {
+        q_id = $(v).attr("data-question-id");
+        if (q_id == question_id) {
+            index = k;
+            return false;
+        }
+    });
+    if (index == 0) {
+        $(".back").addClass("hidden");
+    } else {
+        $(".back").removeClass("hidden");
+        var prev_question_id = $(questions[index - 1]).attr("data-question-id");
+        $(".back").attr("data-question-id", prev_question_id);
+    }
+    if (index == questions.length - 1) {
+        $(".next").addClass("hidden");
+    } else {
+        $(".next").removeClass("hidden");
+        var next_question_id = $(questions[index + 1]).attr("data-question-id");
+        $(".next").attr("data-question-id", next_question_id);
+    }
+}
+
+//Extracting action answered
+function extractUserResponse(question_id) {
+    $(".button-tooltip").removeAttr("disabled");
+    var ques_type = test_data.question_map[question_id].question_type;
+    var user_response = [];
+    switch (ques_type) {
+        case 1:
+            //
+            var mcqRes = $(
+                ".display-area .answer-box.mcqoption .inside.option_active .option_text"
+            ).attr("option_id");
+            if (mcqRes == undefined) {
+                mcqRes = -1;
+                user_response = mcqRes;
+                break;
+            }
+            user_response.push(parseInt(mcqRes));
+            break;
+        case 2:
+            //
+            var maq_option = [];
+            $(".display-area .answer-box.maqoption .inside.option_active .option_text").each(
+                function () {
+                    maq_option.push(parseInt($(this).attr("option_id")));
+                }
+            );
+            user_response = maq_option;
+            break;
+        case 3:
+            //
+
+            var rearrange = [];
+            $(".display-area .answer-box.rearrange .ui-sortable-handle").each(function () {
+                rearrange.push($(this).attr("option_id"));
+            });
+            user_response = rearrange;
+            break;
+        case 4:
+            var response_data = {};
+            $(".display-area .question-wrapper .answer-box.matching .columnA li").each(function (
+                k,
+                elem
+            ) {
+                var key = $(elem).attr("data-option");
+                var value = $(elem).attr("data-answer");
+                if (key != undefined && value != undefined) {
+                    response_data[key] = value;
+                }
+            });
+            user_response = response_data;
+            break;
+        case 5:
+            var fillups = [];
+            var flag = 0;
+            $(".display-area .answer-box.fillintheblanks .row").each(function () {
+                var value = $(this).find(".fill-up").val();
+                if (value.length > 0) {
+                    fillups.push(value);
+                    flag = 1;
+                } else {
+                    fillups.push("-1");
+                }
+            });
+            user_response = fillups;
+            if (flag == 0) {
+                user_response = -1;
+            }
+            break;
+        case 6:
+            var value = $(".display-area .answer-box.fillintheblanks .row .fill-up").val();
+            if (value.length > 0) {
+                user_response.push(value);
+            } else {
+                user_response.push("-1");
+            }
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        // case 9:
+        //     break;
+        case 10:
+            user_response = test_data.question_map[question_id].language;
+            break;
+        case 11:
+            var text = $(".display-area .answer-box .editor .ql-editor").html();
+            user_response.push(text);
+            counter();
+            break;
+        default:
+            break;
+    }
+    if (typeof user_response == "object") {
+        if (Object.keys(user_response).length == 0) user_response = -1;
+    }
+    if (user_response !== undefined) {
+        test_data.question_map[question_id].user_ans = user_response;
+    } else {
+        user_response = -1;
+    }
+    if (user_response != -1) {
+        var q_active1 = $(".sidebar .sections .panel .question.sidebar_active");
+        q_active1.find(".ques_status").addClass("visited");
+        markAnswered(question_id);
+        $(".display-area .question-wrapper .button-tooltip").removeClass("hidden");
+    } else if (user_response == -1) {
+        var q_active1 = $(".sidebar .sections .panel .question.sidebar_active");
+        q_active1.find(".ques_status").removeClass("visited");
+    }
+    var data = {};
+    var systime = new Date();
+    data = {
+        question_id: question_id,
+        user_ans: user_response,
+        time_spent: test_data.question_map[question_id].time_spent,
+        server_time: timestamp,
+        system_time: systime.getTime(),
+    };
+    if (test_data.question_map[question_id].answer_status != undefined)
+        data.answer_status = test_data.question_map[question_id].answer_status;
+    actionListner("answered", data);
+}
+
+//Retaining User answer
+function retainUserAns(question_id) {
+    var ques_type = test_data.question_map[question_id].question_type;
+    var user_response = test_data.question_map[question_id].user_ans;
+    if (user_response != -1) {
+        switch (ques_type) {
+            case 1:
+                if (user_response != undefined) {
+                    $(
+                        ".display-area .mcqoption .inside span.option_text[option_id=" +
+                            user_response[0] +
+                            "]"
+                    )
+                        .closest(".inside")
+                        .addClass("option_active");
+                    $(
+                        ".display-area .mcqoption .inside span.option_text[option_id=" +
+                            user_response[0] +
+                            "]"
+                    )[0].previousElementSibling.innerHTML = "radio_button_checked";
+                    $(".button-tooltip").removeClass("hidden");
+                }
+                break;
+            case 2:
+                for (var i = 0; i < user_response.length; i++) {
+                    $(
+                        ".display-area .maqoption .inside span.option_text[option_id=" +
+                            user_response[i] +
+                            "]"
+                    )
+                        .closest(".inside")
+                        .addClass("option_active");
+                    $(
+                        ".display-area .maqoption .inside span.option_text[option_id=" +
+                            user_response[i] +
+                            "]"
+                    )[0].previousElementSibling.innerHTML = "check_box";
+                }
+                break;
+            case 3:
+                var i = 0;
+                $(".display-area .rearrange div.ui-sortable-handle").each(function () {
+                    $(this).attr("option_id", user_response[i]);
+                    console.log($(this));
+                    $(this).find("span")[0].innerHTML = user_response[i];
+                    i++;
+                });
+                break;
+            case 4:
+                //Being Done in Match function
+                $(".button-tooltip").removeClass("hidden");
+                break;
+            case 5:
+                var i = 0;
+                $(".display-area .fillintheblanks div.row input").each(function () {
+                    if (user_response[i] != -1) {
+                        $(this).attr("value", user_response[i]);
+                    }
+                    i++;
+                });
+
+                break;
+            case 6:
+                $(".display-area .fillintheblanks div.row input").attr("value", user_response[0]);
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 10:
+                break;
+            case 11:
+                $(".display-area .editor .ql-editor").empty().append(user_response[0]);
+                counter();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+//To do all the necessary marking to make a question active
+function currentQuestionActive(question_id, sidebar) {
+    if (bool == 0) {
+        openNav();
+    }
+    if ($(".sidebar .ques_status:not(.visited)").length == 0) {
+        // $('.end-block .quit_exam').addClass('hidden');
+        // $('.end-block .submit_exam').removeClass('hidden');
+        $(".end-block .pause_exam").addClass("no-margin-right");
+        $("#test_summary .protip").addClass("hidden");
+    }
+    $(".button-tooltip").addClass("hidden");
+    $(".sidebar .sections .question").removeClass("sidebar_active");
+    $(".sidebar .sections .question[data-question-id=" + question_id + "]").addClass(
+        "sidebar_active"
+    );
+    var question = $(".sidebar .sections .question[data-question-id=" + question_id + "]");
+    // question.addClass('sidebar_active');
+    if (question[0] !== undefined && sidebar === 0) question[0].scrollIntoView();
+
+    if (last_question_id != undefined) {
+        var systime = new Date();
+        var data = {
+            from: last_question_id,
+            to: question_id,
+            time_spent: test_data.question_map[last_question_id].time_spent,
+            server_time: timestamp,
+            system_time: systime.getTime(),
+        };
+        // console.log(user_response);
+        if (test_data.question_map[question_id].answer_status != undefined)
+            data.answer_status = test_data.question_map[question_id].answer_status;
+        actionListner("changedQuestion", data);
+    }
+    // .addClass('sidebar_active')
+}
+
+function actionAPI(actionType, actionData, action_id = -1) {
+    let check_face360 = window.location.href.split("https://")[1].split(".")[0];
+    if (g_action_log === undefined || Object.keys(g_action_log).length === 0) {
+        setTimeout(actionAPI, randomIntFromInterval(8000, 15000));
+        return;
+    }
+    $.ajax({
+        url: g_api_url + "test/action/save/",
+        type: "POST",
+        headers: {
+            Authorization: fetch_user_token(),
+        },
+        data: {
+            url_param: url_param,
+            action_log: JSON.stringify(g_action_log),
+        },
+        dataType: "json",
+        success: function (json) {
+            if (json.status == 1) {
+                if (json.time != undefined) {
+                    timestamp = json.time;
+                }
+                if (json.time_left != undefined) {
+                    timeleft = json.time_left;
+                }
+                timeago = new Date().getTime();
+                time_ago(1);
+                if ($(".sidebar .ques_status:not(.visited)").length == 0) {
+                    // $('.end-block .quit_exam').addClass('hidden');
+                    // $('.end-block .submit_exam').removeClass('hidden');
+                    $("#test_summary .protip").addClass("hidden");
+                } else {
+                    // $('.end-block .quit_exam').removeClass('hidden');
+                    // $('.end-block .submit_exam').addClass('hidden');
+                }
+                /* removing action ids that are acknowledged */
+                if (json.acknowledged != undefined) {
+                    for (i = 0; i < json.acknowledged.length; i++) {
+                        delete g_action_log[json.acknowledged[i]];
+                    }
+                }
+                save_data(); //update the action log in local storage
+            } else {
+                if (json.status == 2) {
+                    timeleft = 0;
+                    if(check_face360 !== "face360")
+                        window.location = g_url;
+                    else {
+                        // update_f360_leaderboard();
+                        window.location = g_url;
+                    }
+                      
+                }
+                iziToast.warning({
+                    title: "Caution",
+                    message: "Network Disconnected!" + json.msg,
+                });
+                if (typeof actionType !== undefined && actionType == "paused") {
+                    if (paused == 0) {
+                        pauseExam(1);
+                    } else if (paused == 1) {
+                        pauseExam(0);
+                        //update question map here
+                        timeleft = json.timeleft;
+                        timestamp = json.timestamp;
+                        test_data.question_map = json.question_map;
+                    }
+                }
+            }
+        },
+        error: function (e) {
+            if (typeof actionType !== undefined && actionType == "paused") {
+                delete g_action_log[action_id];
+                if (paused == 0) {
+                    pauseExam(1);
+                } else if (paused == 1) {
+                    pauseExam(0);
+                }
+            } else {
+                error_response(e);
+            }
+            console.log(e);
+        },
+    });
+    if (actionType === undefined) setTimeout(actionAPI, randomIntFromInterval(3000, 10000));
+}
+
+//Action Listener for all action API calls
+function actionListner(actionType, actionData) {
+    //answered , changedQuestion, bookmark , focus_left, paused
+    console.log(actionType, actionData);
+    let action_id = Math.floor(Math.random() * 10000000 + 1) + "_" + timestamp;
+    console.log(action_id);
+    let action_ele = {
+        action_type: actionType,
+        action_data: actionData,
+    };
+    g_action_log[action_id] = action_ele;
+    save_data();
+    if (actionType == "paused") actionAPI(actionType, actionData, action_id);
+}
+
+//For Matching
+function match(question_id) {
+    var activeA = null;
+    var activeB = null;
+    var lineSettings = {
+        name: "match-line",
+        state: "new",
+        stroke: 3,
+        parent: '.display-area .question-wrapper[data-question-id="' + question_id + '"] .matching',
+    };
+    var setStatus = function (item, status) {
+        if (item.status === status) return;
+        item.status = status;
+        item.el.setAttribute("data-status", status);
+    };
+    var setAnswer = function (item, status) {
+        if (item.status === status) return;
+        item.answer = status;
+        item.el.setAttribute("data-answer", status);
+    };
+    var drawLine = function (optionA, optionB, save, answer_status) {
+        setStatus(optionA, "selected");
+        setStatus(optionB, "selected");
+        activeA = null;
+        activeB = null;
+        var line = LINES.createLine(optionA.anchor, optionB.anchor, lineSettings);
+        setTimeout(function () {
+            line.state("draw");
+        }, 10);
+        setTimeout(function () {
+            var status = "answered";
+            line.state(status);
+            var color;
+            if (answer_status == -1) {
+                color = getRandomColor();
+            } else if (answer_status == 0) {
+                color = "red";
+            } else {
+                color = "green";
+            }
+            line.el.style.backgroundColor = color;
+            optionA.el.style.borderColor = color;
+            optionB.el.style.borderColor = color;
+            setStatus(optionA, status);
+            setStatus(optionB, status);
+            setAnswer(optionA, optionB.key);
+            setAnswer(optionB, optionA.key);
+            if (save) extractUserResponse(question_id);
+        }, 510);
+    };
+    var elemsA = $(".display-area .matching")[0].querySelectorAll(".columnA li");
+    var elemsB = $(".display-area .matching")[0].querySelectorAll(".columnB li");
+    elemsA = Array.prototype.map.call(elemsA, function (elem) {
+        var key = elem.getAttribute("data-option");
+        return {
+            el: elem,
+            status: "blank",
+            answer: "",
+            key: key,
+            anchor: LINES.createAnchor({
+                el: elem,
+                xOrigin: "right",
+                xOffset: 0,
+                yOrigin: "center",
+            }),
+        };
+    });
+    elemsB = Array.prototype.map.call(elemsB, function (elem) {
+        var key = elem.getAttribute("data-option");
+        return {
+            el: elem,
+            status: "blank",
+            answer: "",
+            key: key,
+            anchor: LINES.createAnchor({
+                el: elem,
+                xOrigin: "left",
+                xOffset: 0,
+                yOrigin: "center",
+            }),
+        };
+    });
+    if (
+        test_data.question_map[question_id].answer_status == undefined ||
+        test_data.question_map[question_id].answer_status < 0
+    ) {
+        elemsA.forEach(function (elem) {
+            elem.el.addEventListener("click", function (e) {
+                if (activeA === elem) {
+                    activeA = null;
+                    setStatus(elem, "blank");
+                    return;
+                }
+
+                if (activeA) {
+                    setStatus(activeA, "blank");
+                }
+
+                if (elem.status === "blank") {
+                    activeA = elem;
+                    setStatus(elem, "active");
+
+                    if (activeB) {
+                        drawLine(activeB, elem, true, -1);
+                    }
+                }
+            });
+        });
+        elemsB.forEach(function (elem) {
+            elem.el.addEventListener("click", function (e) {
+                if (activeB === elem) {
+                    activeB = null;
+                    setStatus(elem, "blank");
+                    return;
+                }
+
+                if (activeB) {
+                    setStatus(activeB, "blank");
+                }
+
+                if (elem.status === "blank") {
+                    activeB = elem;
+                    setStatus(elem, "active");
+
+                    if (activeA) {
+                        drawLine(activeA, elem, true, -1);
+                    }
+                }
+            });
+        });
+    } //Retained Data
+    var user_answer = test_data.question_map[question_id].user_ans;
+    if (user_answer !== undefined && user_answer != -1) {
+        $.each(user_answer, function (k, v) {
+            elemsA.forEach(function (elem) {
+                if (elem.key == k) {
+                    elemsB.forEach(function (elemB) {
+                        if (elemB.key == v) {
+                            if (
+                                test_data.question_map[question_id].answer_status == undefined ||
+                                test_data.question_map[question_id].answer_status < 0
+                            )
+                                drawLine(elem, elemB, false, -1);
+                            else {
+                                if (test_data.question_map[question_id].solution[elem.key] == v) {
+                                    drawLine(elem, elemB, false, 1);
+                                } else {
+                                    drawLine(elem, elemB, false, 0);
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                }
+            });
+        });
+    }
+}
+
+//Sync time with server
+function updateTime(updatedTime) {
+    var diff = updatedTime - timestamp;
+    timeleft = timeleft - diff;
+}
+
+// To Get A cookie
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(";");
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == " ") {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+//for submit the test
+function submitTest(retry = false, mode = 0, tab_switch = false) {
+    let check_face360 = window.location.href.split("https://")[1].split(".")[0];
+    if (test_offline != 0 && retry == false) {
+        //if test is offline show alert
+        if (timeleft <= 0) {
+            submit_retry(false);
+        } else {
+            submit_retry();
+        }
+    } else {
+        //submit the respoonse !!
+        $.ajax({
+            url: g_api_url + "test/submit/",
+            type: "POST",
+            headers: {
+                Authorization: fetch_user_token(),
+            },
+            data: {
+                url_param: url_param,
+                action_log: JSON.stringify(g_action_log),
+                submit_mode: mode,
+            },
+            dataType: "json",
+            success: function (json) {
+                let redirection = true;
+
+                if (check_face360 === "face360") {
+                    redirection = false;
+                }
+                if (json.status == 1 && redirection) {
+                    window.location = g_url + "platform/report/" + url_param + "/?tab_switch=" + (tab_switch ? 1 : 0);
+                } else {
+                    show_toast("Submission failure", json.msg, "");
+                }
+            },
+            error: function (e) {
+                error_response(e);
+                if (retry == true) {
+                    if (timeleft <= 0) {
+                        submit_retry(true);
+                    } else {
+                        submit_retry();
+                    }
+                }
+            },
+        });
+
+        // Api Call to save test data in face360 leaderBoard
+        // if (check_face360 === "face360") {
+        //     setTimeout(() => {
+        //         $.ajax({
+        //             url: "https://ng.faceprep.in/api/leaderboard/",
+        //             type: "POST",
+        //             headers: {
+        //                 Authorization: getCookie("auth_token"),
+        //             },
+        //             data: {
+        //                 token: fetch_user_token(),
+        //                 test_id: instructions["test_id"],
+        //                 id: url_param,
+        //                 type: "test",
+        //             },
+        //             dataType: "json",
+        //             success: function (res) {
+        //                 window.location = g_url + "platform/report/" + url_param + "/";
+        //                 console.log(res);
+        //             },
+        //         }); //End API call
+        //     }, 2000);
+        // }
+
+
+    }
+}
+
+function update_f360_leaderboard() {
+    $.ajax({
+        url: "https://ng.faceprep.in/api/leaderboard/",
+        type: "POST",
+        headers: {
+            Authorization: getCookie("auth_token"),
+        },
+        data: {
+            token: fetch_user_token(),
+            test_id: instructions["test_id"],
+            id: url_param,
+            type: "test",
+        },
+        dataType: "json",
+        success: function (res) {
+            window.location = g_url + "platform/report/" + url_param + "/";
+        },
+    }); //End API call
+}
+
+//show when etst offline and submit test clicked
+function submit_retry(time = true) {
+    return swal({
+        title: "You are Offline",
+        text: "Check your network. Please try again after sometime.",
+        icon: "warning",
+        button: {
+            text: "Retry!",
+        },
+        dangerMode: true,
+        closeOnClickOutside: time,
+    }).then((willDelete) => {
+        if (willDelete) {
+            submitTest(true);
+        }
+    });
+}
+
+function timesUp(timesUp = 0) {
+    setTestSummaryModal();
+    $('[data-toggle="tooltip"]').tooltip();
+    if (timesUp == 1) {
+        $("#test_summary").modal(
+            {
+                backdrop: "static",
+                keyboard: false,
+            },
+            "toggle"
+        );
+        $("#test_summary .modal-footer .goback").attr("disabled", true);
+        submitTest();
+    } else {
+        $("#test_summary").modal("show");
+    }
+    $("#test_summary .modal-footer").show();
+}
+
+//To Pause the Exam
+function pauseExam(flag) {
+    paused = flag;
+    if (flag == 1) {
+        //show modal and blurr bg
+        $("#pause_modal").modal(
+            {
+                backdrop: "static",
+                keyboard: false,
+            },
+            "toggle"
+        );
+        $(".navbar").addClass("blurbg");
+        $(".question-wrapper").addClass("blurbg");
+        $(".sidebar").addClass("blurbg");
+    } else if (flag == 0) {
+        // hide modal , remove blur
+        $("#pause_modal").modal("hide");
+        $(".navbar").removeClass("blurbg");
+        $(".question-wrapper").removeClass("blurbg");
+        $(".sidebar").removeClass("blurbg");
+    }
+}
+
+//Setting Test Summary
+function setTestSummaryModal(map = -1) {
+    var attempted = 0;
+    var unattempted = 0;
+    var bookmarked_attempt = 0;
+    var bookmarked_unattempt = 0;
+    var correct = 0;
+    var incorrect = 0;
+    if (map == 1) {
+        $("#test_summary .modal-content .modal-header .modal-title").html("Question Map");
+    } else {
+        $("#test_summary .modal-content .modal-header .modal-title").html("Submit test");
+    }
+    $("#test_summary .modal-content .modal-body").empty();
+    $.each(test_data.test_sections, function (section_id, section_data) {
+        var section = $(".clone-block .minimap-clone .section").clone();
+        section.find(".section_header .section_title").html(section_data.name);
+        let quesNo = 1;
+        $.each(section_data.questions, function (k, question_id) {
+            if (test_data.question_map[question_id].question_type === 9 && test_data.question_map[question_id].children !== undefined && test_data.question_map[question_id].children.length > 0) {
+                test_data.question_map[question_id].children.forEach(childQId => {
+                    var question_data = test_data.question_map[childQId];
+                    var question_box = $(".clone-block .minimap-clone .ques_box").clone();
+                    var tooltip = $(".clone-block .minimap-clone .bs_tooltip").clone();
+                    var ques_text = question_data.question_text;
+                    var index = ques_text.indexOf(">");
+                    index++;
+                    var question = ques_text.substr(index, Math.min(18, ques_text.length));
+                    question += "...";
+                    //set question in tooltip
+                    tooltip.find(".ques_text").html(question);
+                    tooltip.find(".question_no").html(quesNo);
+                    question_box.find(".square").text(quesNo);
+                    question_box.find(".rsquare").text(quesNo);
+
+                    //check if ques is answered and give color accordingly
+                    if (question_data.user_ans == -1) {
+                        if (question_data.bookmark_status == 0) {
+                            //not bookmarked
+                            question_box.find(".square").addClass("not_answered");
+                            question_box.find(".rsquare").remove();
+                        } else {
+                            //bookmarked
+                            question_box.find(".rsquare").addClass("obookmarked");
+                            question_box.find(".square").remove();
+                            tooltip.find(".bookmarked").removeClass("hidden");
+                            bookmarked_unattempt++;
+                        }
+                        tooltip.find(".unattempted").removeClass("hidden");
+                        unattempted++;
+                    } else if (question_data.user_ans != -1) {
+                        // answered
+                        question_box.find(".rsquare").remove();
+                        if (question_data.bookmark_status == 0) {
+                            //not bookmarked
+                            question_box.find(".square").addClass("answered");
+                        } else {
+                            //bookmarked
+                            question_box.find(".square").addClass("bookmarked");
+                            tooltip.find(".bookmarked").removeClass("hidden");
+                            bookmarked_attempt++;
+                        }
+
+                        if (
+                            question_data.answered != undefined &&
+                            question_data.answered == true &&
+                            test_data.practice_mode
+                        ) {
+                            question_box.find(".square").addClass("correctMap");
+                            tooltip.find(".correct").removeClass("hidden");
+                            correct++;
+                        } else if (
+                            question_data.answered != undefined &&
+                            question_data.answered == false &&
+                            test_data.practice_mode
+                        ) {
+                            question_box.find(".square").addClass("wrongMap");
+                            tooltip.find(".incorrect").removeClass("hidden");
+                            incorrect++;
+                        }
+                        tooltip.find(".attempted").removeClass("hidden");
+                        attempted++;
+                    }
+
+                    question_box.attr("title", tooltip.html());
+                    question_box.click(function () {
+                        //check if sectional timing is set
+                        //then check question being fetched is in active section
+                        if (
+                            current_section == "" ||
+                            $.inArray(childQId, test_data.test_sections[current_section].questions) != -1
+                        ) {
+                            $("#test_summary").modal("hide");
+                            fetchQuestion(childQId);
+                        }
+                    });
+                    // append this question_box in section
+                    section.append(question_box);
+                    quesNo++;
+                });
+            } else {
+                var question_data = test_data.question_map[question_id];
+                var question_box = $(".clone-block .minimap-clone .ques_box").clone();
+                var tooltip = $(".clone-block .minimap-clone .bs_tooltip").clone();
+                var ques_text = question_data.question_text;
+                var index = ques_text.indexOf(">");
+                index++;
+                var question = ques_text.substr(index, Math.min(18, ques_text.length));
+                question += "...";
+                //set question in tooltip
+                tooltip.find(".ques_text").html(question);
+                tooltip.find(".question_no").html(quesNo);
+                question_box.find(".square").text(quesNo);
+                question_box.find(".rsquare").text(quesNo);
+
+                //check if ques is answered and give color accordingly
+                if (question_data.user_ans == -1) {
+                    if (question_data.bookmark_status == 0) {
+                        //not bookmarked
+                        question_box.find(".square").addClass("not_answered");
+                        question_box.find(".rsquare").remove();
+                    } else {
+                        //bookmarked
+                        question_box.find(".rsquare").addClass("obookmarked");
+                        question_box.find(".square").remove();
+                        tooltip.find(".bookmarked").removeClass("hidden");
+                        bookmarked_unattempt++;
+                    }
+                    tooltip.find(".unattempted").removeClass("hidden");
+                    unattempted++;
+                } else if (question_data.user_ans != -1) {
+                    // answered
+                    question_box.find(".rsquare").remove();
+                    if (question_data.bookmark_status == 0) {
+                        //not bookmarked
+                        question_box.find(".square").addClass("answered");
+                    } else {
+                        //bookmarked
+                        question_box.find(".square").addClass("bookmarked");
+                        tooltip.find(".bookmarked").removeClass("hidden");
+                        bookmarked_attempt++;
+                    }
+
+                    if (
+                        question_data.answered != undefined &&
+                        question_data.answered == true &&
+                        test_data.practice_mode
+                    ) {
+                        question_box.find(".square").addClass("correctMap");
+                        tooltip.find(".correct").removeClass("hidden");
+                        correct++;
+                    } else if (
+                        question_data.answered != undefined &&
+                        question_data.answered == false &&
+                        test_data.practice_mode
+                    ) {
+                        question_box.find(".square").addClass("wrongMap");
+                        tooltip.find(".incorrect").removeClass("hidden");
+                        incorrect++;
+                    }
+                    tooltip.find(".attempted").removeClass("hidden");
+                    attempted++;
+                }
+
+                question_box.attr("title", tooltip.html());
+                question_box.click(function () {
+                    //check if sectional timing is set
+                    //then check question being fetched is in active section
+                    if (
+                        current_section == "" ||
+                        $.inArray(question_id, test_data.test_sections[current_section].questions) != -1
+                    ) {
+                        $("#test_summary").modal("hide");
+                        fetchQuestion(question_id);
+                    }
+                });
+                // append this question_box in section
+                section.append(question_box);
+                quesNo++;
+            }
+        });
+        $("#test_summary .modal-content .modal-body").append(section);
+        $("#test_summary .modal-content .modal-body").append("<br>");
+    });
+    var tags = $(".clone-block .tags").clone();
+    attempted = attempted == 1 ? attempted + " question" : attempted + " questions";
+    unattempted = unattempted == 1 ? unattempted + " question" : unattempted + " questions";
+    bookmarked_attempt =
+        bookmarked_attempt == 1
+            ? bookmarked_attempt + " question"
+            : bookmarked_attempt + " questions";
+    bookmarked_unattempt =
+        bookmarked_unattempt == 1
+            ? bookmarked_unattempt + " question"
+            : bookmarked_unattempt + " questions";
+    if (test_data.practice_mode) {
+        tags.find(".practice").show();
+    }
+    tags.find(".tag.attempted .figure").html(attempted);
+    tags.find(".tag.corrected .figure").html(correct + " questions");
+    tags.find(".tag.unattempted .figure").html(unattempted);
+    tags.find(".tag.incorrected .figure").html(incorrect + " questions");
+    tags.find(".tag.bookmarked.unattempted .figure").html(bookmarked_attempt);
+    tags.find(".tag.bookmarked.attempted .figure").html(bookmarked_unattempt);
+    $("#test_summary .modal-content .modal-body").append(tags);
+    var protip = $(".clone-block .protip").clone();
+    if (parseInt(unattempted) != 0) {
+        protip.find(".figure").html(unattempted);
+        $("#test_summary .modal-content .modal-body").append(protip);
+    }
+}
+
+
+// Restricts input for the given textbox to the given inputFilter.
+function setInputFilter(textbox, inputFilter) {
+    ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(
+        function (event) {
+            textbox[0].addEventListener(event, function () {
+                if (inputFilter(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                    show_toast("warning", "Not Allowed", "Only Numerical Values Allowed!");
+                }
+            });
+        }
+    );
+}
+
+//shows the ans of the specific question in practice mode(mode==0)
+function evaluateAns(qid, submit = -1) {
+    var ques_type = test_data.question_map[qid].question_type;
+    var user_response = test_data.question_map[qid].user_ans;
+    var solution = test_data.question_map[qid].solution;
+    var q_active1 = $(".sidebar .sections .panel .question.sidebar_active");
+    var flag = 0;
+    var foremarks;
+
+    if (
+        (user_response != -1 && submit == 0) ||
+        test_data.question_map[qid].answer_status != undefined
+    ) {
+        $(".reset").hide();
+
+        switch (ques_type) {
+            case 1:
+                //
+                console.log(user_response);
+                // [option_id=' + user_response[0] + ']
+                if (user_response[0] == solution[0]) {
+                    //correct ans
+                    q_active1.find("span.ques_status").addClass("correct");
+                } else {
+                    //not correct
+                    q_active1.find("span.ques_status").addClass("wrong");
+                    flag = 1;
+                }
+                break;
+            case 2:
+                //[option_id=' + user_response[0] + ']
+                for (var i = 0; i < solution.length; i++) {
+                    for (var j = 0; j < user_response.length; j++) {
+                        if (solution[i] == user_response[j]) {
+                            flag = 0;
+                            break;
+                        } else {
+                            flag = 1;
+                        }
+                    }
+                }
+                if (flag == 1) {
+                    q_active1.find("span.ques_status").addClass("wrong");
+                    flag = 1;
+                } else {
+                    q_active1.find("span.ques_status").addClass("correct");
+                }
+                // $('.answer .option_ans .maqoption .inside span.option_text[option_id=' + user_response[i] + ']')[0].previousElementSibling.innerHTML = "check_box";
+
+                break;
+            case 3:
+                //
+                var i = 0;
+                for (i = 0; i < solution.length; i++) {
+                    if (user_response[i] != solution[i]) {
+                        //wrong
+                        flag = 1;
+                    }
+                }
+                if (flag == 1) {
+                    //wrong
+                    q_active1.find("span.ques_status").addClass("wrong");
+                } else {
+                    //correct
+                    q_active1.find("span.ques_status").addClass("correct");
+                }
+                break;
+            case 4:
+                $.each(solution, function (k, v) {
+                    if (user_response[k] != v) {
+                        flag = 1;
+                        return false;
+                    }
+                });
+                break;
+            case 5:
+                var i = 0;
+                for (i = 0; i < solution.length; i++) {
+                    if (user_response[i] == solution[i]) {
+                        //correct
+                    } else {
+                        //wrong
+                        flag = 1;
+                    }
+                    i++;
+                }
+                if (flag == 1) {
+                    q_active1.find("span.ques_status").addClass("wrong");
+                } else {
+                    q_active1.find("span.ques_status").addClass("correct");
+                }
+
+                break;
+            case 6:
+                if (user_response[0] == solution) {
+                } else {
+                    //wrong
+                    q_active1.find("span.ques_status").addClass("wrong");
+                    flag = 1;
+                }
+                // $('.answer .option_ans .fillintheblanks div.row input').attr('value',user_response[0]);
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            // case 9:
+            //     break;
+            case 10:
+                break;
+            case 11:
+                // $('.answer .option_ans .editor .ql-editor').empty().append(user_response[0]);
+                break;
+            default:
+                break;
+        }
+
+        if (flag == 1) {
+            //wrong
+            test_data.question_map[qid]["answer_status"] = 0;
+        } else {
+            //right
+            test_data.question_map[qid]["answer_status"] = 1;
+        }
+    }
+    fetchQuestion(qid);
+}
+
+//For Coding
+function codeStart() {
+    $(
+        ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .tc_wrapper .tc_no_box[data-tc='" +
+            0 +
+            "']"
+    ).addClass("selected");
+    $(
+        ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .test_case_data .test_case_desc[data-tc='" +
+            0 +
+            "']"
+    ).removeClass("hidden");
+    $(
+        ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .tc_wrapper .tc_no_box"
+    ).click(function () {
+        $(
+            ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .tc_wrapper .tc_no_box"
+        ).removeClass("selected");
+        $(
+            ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .test_case_data .test_case_desc"
+        ).addClass("hidden");
+        var data_tc = $(this).attr("data-tc");
+        $(this).addClass("selected");
+        $(
+            ".display-area .answer-box .coding_tc_wrapper .test_case_wrapper .test_case_data .test_case_desc[data-tc='" +
+                data_tc +
+                "']"
+        ).removeClass("hidden");
+    });
+    $(
+        ".display-area .answer-box .editor_action_options .custom-input .switch .switch-check"
+    ).change(function () {
+        console.log("calling");
+        if ($(this).is(":checked")) {
+            $(".display-area .answer-box .coding_tc_wrapper .test_case_wrapper").addClass("hidden");
+            $(
+                ".display-area .answer-box .editor_action_options .test_case_custom_wrapper"
+            ).removeClass("hidden");
+            $(".display-area .answer-box .editor_action_options .buttons .submit").prop(
+                "disabled",
+                true
+            );
+            $(".display-area .answer-box .editor_action_options .buttons .custom-run").removeClass(
+                "hidden"
+            );
+            $(".display-area .answer-box .editor_action_options .buttons .run").addClass("hidden");
+        } else {
+            console.log("2");
+            $(
+                ".display-area .answer-box .editor_action_options .test_case_custom_wrapper"
+            ).addClass("hidden");
+            $(".display-area .answer-box .coding_tc_wrapper .test_case_wrapper").removeClass(
+                "hidden"
+            );
+            $(".display-area .answer-box .editor_action_options .buttons .submit").removeAttr(
+                "disabled"
+            );
+            $(".display-area .answer-box .editor_action_options .buttons .run").removeClass(
+                "hidden"
+            );
+            $(".display-area .answer-box .editor_action_options .buttons .custom-run").addClass(
+                "hidden"
+            );
+        }
+    });
+}
+
+// initializing scratchpad
+function initialize_scratchpad(lang_id, question_id, code_blocks = []) {
+    let languages = test_data.question_map[question_id].language;
+    let mode, value;
+    editor_id = "sp_cm_textarea";
+    if (lang_id == 0) {
+        mode = "";
+        value = "";
+    } else {
+        mode = coding_languages[lang_id]["mode"];
+        question_language_choice[question_id] = lang_id;
+        if (languages[lang_id] != undefined) {
+            if (test_data.question_map[question_id].user_ans == -1) {
+                value = languages[lang_id]["sample"];
+            } else {
+                value = test_data.question_map[question_id].user_ans[lang_id]["sample"];
+            }
+        }
+    }
+
+    var sp_cm_editor = CodeMirror.fromTextArea($(".playground #" + editor_id)[0], {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: mode,
+        indentUnit: 4,
+        indentWithTabs: true,
+        theme: "blackboard",
+    });
+    sp_cm_editor.setSize(null, "350px");
+    sp_cm_editor.setValue(value);
+    sp_cm_editor.refresh();
+    sp_cm_editor.on("change", function () {
+        question_language_choice[question_id] = lang_id;
+        // Set sample to user's current answer so it persists when user changes the language or question
+        test_data.question_map[question_id].language[lang_id].sample = sp_cm_editor.getValue();
+    });
+    $.each(code_blocks, function (key, value) {
+        if (value.lang_id == lang_id)
+            $.each(value.blocks, function (k, v) {
+                sp_cm_editor.markText(
+                    { line: v.start - 1, ch: 0 },
+                    { line: v.end - 1 },
+                    { readOnly: true }
+                );
+            });
+    });
+    this.sp_cm_editor = sp_cm_editor;
+    $(".display-area .answer-box .sp_cm_wrapper").bind("contextmenu", function () {
+        return false;
+    });
+    return sp_cm_editor;
+}
+
+//Editor Initialization
+function editor_initialise(default_lang, question_id, code_blocks = []) {
+    $(".display-area .editor_action_options .status")
+        .html("")
+        .removeClass("status_wrong")
+        .removeClass("status_right");
+
+    let languages = test_data.question_map[question_id].language;
+
+    let lang_selected;
+    // console.log("question_language_choice[question_id]: ", question_language_choice[question_id])
+    // console.log("question_id: ", question_id)
+    // console.log("default_lang: ", default_lang)
+    if (question_language_choice[question_id] !== undefined) {
+        console.log("Setting to user's choice");
+        lang_selected = question_language_choice[question_id];
+    } else if (selected_lang_id !== undefined) {
+        console.log("selected_lang_id");
+        lang_selected = selected_lang_id;
+    } else if (default_lang != 0) {
+        console.log("setting to default");
+        lang_selected = default_lang;
+    } else {
+        console.log("Nothing found");
+        lang_selected = Object.keys(languages)[0];
+    }
+    // console.log("lang_selected: ", lang_selected)
+    let editor_wrapper_class = "coding_wrapper";
+
+    let sorted = [];
+    for (let language in coding_languages) {
+        if (language < 100) sorted.push([language, coding_languages[language]]);
+    }
+    sorted.sort((a, b) => {
+        if (a[1].name < b[1].name) return -1;
+        else return 1;
+    });
+    for (language in coding_languages) {
+        if (language >= 100) sorted.push([language, coding_languages[language]]);
+    }
+    sorted = sorted.map((x) => x[0]).filter((x) => Object.keys(languages).includes(x));
+    let sorts = []
+    sorted.filter((x) => {
+        if(x == default_lang)
+            delete x
+        else
+            sorts.push(x)
+        
+    })
+    sorts.unshift(default_lang.toString())
+    sorts.forEach((k) => {
+        $(".playground .coding_wrapper .editor_lang_select").append(
+            "<option value='" + k + "'>" + coding_languages[k].name + "</option>"
+        );
+        // $('.playground .'+editor_wrapper_class+'.CodeMirror').remove();
+        // coding_editor = initialize_scratchpad(lang_selected, question_id);
+    });
+    $(
+        ".playground ." +
+            editor_wrapper_class +
+            " .editor_options .editor_lang_select_wrapper .editor_lang_select"
+    ).change(function () {
+        lang_selected = $(
+            ".playground ." +
+                editor_wrapper_class +
+                " .editor_options .editor_lang_select_wrapper .editor_lang_select"
+        ).val();
+        selected_lang_id = lang_selected;
+        $(".playground ." + editor_wrapper_class + " .CodeMirror").remove();
+        coding_editor = initialize_scratchpad(lang_selected, question_id, code_blocks);
+    });
+    coding_editor = initialize_scratchpad(lang_selected, question_id, code_blocks);
+    selected_lang_id &&
+        $(`.question-wrapper .answer-box .coding_wrapper 
+    .editor_options .editor_lang_select_wrapper .editor_lang_select`).val(lang_selected);
+    var custom_input_data = $(".display-area textarea.txt.input-field");
+    $(".display-area .answer-box .run").click(function () {
+        /* proceeding if there is no active compilation */
+        if (g_compile_status == 0) {
+            g_compile_status = 1;
+            $(".display-area .editor_action_options .status")
+                .html("")
+                .removeClass("status_wrong")
+                .removeClass("status_right");
+            /* displaying loading symbol in button */
+            $(this).find(".loading").css("display", "initial");
+            $(".display-area .answer-box .submit").attr("disabled", "disabled");
+            $(".display-area .answer-box .custom-input").addClass("hidden");
+            if ($(this).attr("disabled") == undefined) {
+                $.ajax({
+                    url: g_api_url + "code/user/compile/",
+                    type: "POST",
+                    headers: {
+                        Authorization: fetch_user_token(),
+                    },
+                    data: {
+                        code: coding_editor.getValue(),
+                        url_param: url_param,
+                        question_id: question_id,
+                        mode: 1,
+                        lang_id: lang_selected,
+                    },
+                    dataType: "json",
+                    success: function (json) {
+                        g_compile_status = 0;
+                        if (json.status == 1 && json.compiled == 1) {
+                            /* removing loading symbol from button */
+                            $(".display-area .answer-box .run .loading").css("display", "none");
+                            var list = $(".playground .test_case_wrapper .test_case_desc");
+                            var listBox = $(".playground .test_case_wrapper .tc_no_box");
+                            $.each(json.cases, function (k, v) {
+                                var element = $(list[k]);
+                                element.find(".input_tc").html(v.in.replace(/\\n/g, "<br/>"));
+                                element.find(".output_tc").html(v.out.replace(/\\n/g, "<br/>"));
+                                element.find(".y_output").removeClass("hidden");
+                                v.output = v.output.replace(/\\n/g, "<br/>");
+                                element.find(".your_output_tc").html(v.output);
+                                element.find(".compiler_msg_tc").html(v.msg);
+                                element.find(".compiler_msg").removeClass("hidden");
+                                if (v.pass) {
+                                    $(listBox[k]).removeClass("wrongMap");
+                                    $(listBox[k]).addClass("correctMap");
+                                    $(listBox[k])
+                                        .find(".material-icons")
+                                        .html("check_circle")
+                                        .removeClass("hidden");
+                                } else {
+                                    $(listBox[k]).removeClass("correctMap");
+                                    $(listBox[k]).addClass("wrongMap");
+                                    $(listBox[k])
+                                        .find(".material-icons")
+                                        .html("highlight_off")
+                                        .removeClass("hidden");
+                                }
+                            });
+
+                            $(".display-area .answer-box .submit").removeAttr("disabled");
+                            $(".display-area .answer-box .custom-input").removeClass("hidden");
+                            var q_active = $(".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]");
+                            q_active.find('.no').addClass("answered");
+                        } else if (json.status == 1 && json.compiled == 0) {
+                            $(".display-area .answer-box .run .loading").css("display", "none");
+                            show_toast("failure", json.msg, json.error);
+                        }
+                    },
+                    error: function (e) {
+                        $(".display-area .answer-box .run .loading").css("display", "none");
+                        g_compile_status = 0;
+                        error_response(e);
+                    },
+                });
+            }
+        } else show_toast("failure", "", "Compilation already in progress");
+    });
+    $(".display-area .answer-box .custom-run").click(function () {
+        /* proceeding if there is no active compilation */
+        if (g_compile_status == 0) {
+            g_compile_status = 1;
+            $(".display-area .editor_action_options .status")
+                .html("")
+                .removeClass("status_wrong")
+                .removeClass("status_right");
+            $(".display-area .answer-box .custom-input").addClass("hidden");
+            /* displaying loading symbol in button */
+            $(this).find(".loading").css("display", "initial");
+            if ($(this).attr("disabled") == undefined) {
+                $.ajax({
+                    url: g_api_url + "code/user/compile/",
+                    type: "POST",
+                    headers: {
+                        Authorization: fetch_user_token(),
+                    },
+                    data: {
+                        code: coding_editor.getValue(),
+                        url_param: url_param,
+                        question_id: question_id,
+                        mode: 0,
+                        lang_id: lang_selected,
+                        custom_input: custom_input_data[0].value,
+                    },
+                    dataType: "json",
+                    success: function (json) {
+                        g_compile_status = 0;
+                        if (json.status == 1 && json.compiled == 1) {
+                            /* removing loading from the button */
+                            $(".display-area .answer-box .custom-run .loading").css(
+                                "display",
+                                "none"
+                            );
+
+                            var list = $(".playground .test_case_wrapper .test_case_desc");
+                            $.each(json.cases, function (k, v) {
+                                console.log(v);
+                                $(
+                                    ".display-area .answer-box .editor_action_options .test_case_custom_wrapper .compiler_msg"
+                                )[0].innerHTML = "Compiler Message: " + v.msg;
+                                $(
+                                    ".display-area .answer-box .editor_action_options .test_case_custom_wrapper .output-field"
+                                )[0].value = v.output.replace(/\\n/g, "\n");
+                                console.log(v.output);
+                                $(
+                                    ".display-area .answer-box .editor_action_options .test_case_custom_wrapper .output-field"
+                                ).removeClass("hidden");
+                            });
+
+                            $(".display-area .answer-box .custom-input").removeClass("hidden");
+                            var q_active = $(".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]");
+                            q_active.find('.no').addClass("answered");
+                        } else if (json.status == 1 && json.compiled == 0) {
+                            g_compile_status = 0;
+                            show_toast("failure", json.msg, json.error);
+                        }
+                    },
+                    error: function (e) {
+                        console.log("error");
+                        error_response(e);
+                    },
+                });
+            }
+        } else show_toast("failure", "", "Compilation already in progress");
+    });
+    $(".display-area .answer-box .submit").click(function () {
+        /* proceeding if there is no active compilation */
+        if (g_compile_status == 0 && !$(this).hasClass("disabled")) {
+            g_compile_status = 1;
+            $(".display-area .editor_action_options .status")
+                .html("")
+                .removeClass("status_wrong")
+                .removeClass("status_right");
+            $(".display-area .answer-box .run").attr("disabled");
+            $(".display-area .answer-box .custom-input").addClass("hidden");
+            /* displaying loading symbol in button */
+            $(this).find(".loading").css("display", "initial");
+
+            $.ajax({
+                url: g_api_url + "code/user/compile/",
+                type: "POST",
+                headers: {
+                    Authorization: fetch_user_token(),
+                },
+                data: {
+                    code: coding_editor.getValue(),
+                    url_param: url_param,
+                    question_id: question_id,
+                    mode: 2,
+                    lang_id: lang_selected,
+                },
+                dataType: "json",
+                success: function (json) {
+                    g_compile_status = 0;
+                    if (json.status == 1 && json.compiled == 1) {
+                        /* removing loading from the button */
+                        $(".display-area .answer-box .submit .loading").css("display", "none");
+                        var list = $(".playground .test_case_wrapper .test_case_desc");
+
+                        var listBox = $(".playground .test_case_wrapper .tc_no_box");
+                        console.log(json);
+                        $(".display-area .editor_action_options .status").html(
+                            "<h4 class='percentage col-md-1'>" +
+                                ((json.total_cases_passed / json.total_cases) * 100).toFixed(2) +
+                                "%</h4>" +
+                                "You have passed " +
+                                json.total_cases_passed +
+                                " out of " +
+                                json.total_cases +
+                                " test cases !"
+                        );
+
+                        if (json.all_cases_passed) {
+                            $(".display-area .editor_action_options .status").addClass(
+                                "status_right"
+                            );
+                        } else {
+                            $(".display-area .editor_action_options .status").addClass(
+                                "status_wrong"
+                            );
+                        }
+
+                        $.each(json.cases, function (k, v) {
+                            var element = $(list[k]);
+                            element.find(".input_tc").html(v.in.replace(/\\n/g, "<br/>"));
+                            element.find(".output_tc").html(v.out.replace(/\\n/g, "<br/>"));
+                            element.find(".y_output").removeClass("hidden");
+                            v.output = v.output.replace(/\\n/g, "<br/>");
+                            element.find(".your_output_tc").html(v.output);
+                            element.find(".compiler_msg_tc").html(v.msg);
+                            element.find(".compiler_msg").removeClass("hidden");
+                            if (v.pass) {
+                                $(listBox[k]).removeClass("wrongMap");
+                                $(listBox[k]).addClass("correctMap");
+                                $(listBox[k])
+                                    .find(".material-icons")
+                                    .html("check_circle")
+                                    .removeClass("hidden");
+                            } else {
+                                $(listBox[k]).removeClass("correctMap");
+                                $(listBox[k]).addClass("wrongMap");
+                                $(listBox[k])
+                                    .find(".material-icons")
+                                    .html("highlight_off")
+                                    .removeClass("hidden");
+                            }
+                        });
+
+                        $(".display-area .answer-box .run").removeAttr("disabled");
+                        $(".display-area .answer-box .custom-input").removeClass("hidden");
+                        var q_active = $(".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]");
+                        q_active.find('.no').addClass("answered");
+                    } else if (json.status == 1 && json.compiled == 0) {
+                        {
+                            g_compile_status = 0;
+                            show_toast("failure", json.msg, json.error);
+                        }
+                    }
+                },
+                error: function (e) {
+                    console.log("error");
+                    error_response(e);
+                },
+            });
+        } else if ($(this).hasClass("disabled"))
+            show_toast(
+                "failure",
+                "",
+                "You cannot submit your code with custom input. Please Uncheck the custom input switch!"
+            );
+        else show_toast("failure", "", "Compilation already in progress");
+    });
+    $(".coding_wrapper").focusout(function () {
+        //saving the code response with lang id
+
+        extractUserResponse(question_id);
+        console.log("codesaved");
+    });
+    $(".coding_wrapper").keyup(function (e) {
+        if (e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Enter") {
+            return false;
+        }
+    });
+}
+
+// define a handler
+function doc_keyUp(e) {
+    // this would test for whichever key is 40 and the ctrl key at the same time
+    // console.log(e);
+    if ($("#confirmation_form").serialize() != "n1=&n2=&n3=&n4=&n5=&n6=" && e.key == "Enter") {
+        proctorSubmit();
+    }
+    if (test_data != undefined) {
+        if (e.key == "ArrowRight" && e.ctrlKey == false) {
+            nextQuestion();
+        } else if (e.key == "ArrowLeft" && e.ctrlKey == false) {
+            backQuestion();
+        } else if (e.ctrlKey == true && e.key == "Escape") {
+            timesUp();
+        } else if (e.ctrlKey == true && e.code == "KeyI") {
+            instructionModalOpener();
+        } else if (e.ctrlKey == true && e.code == "KeyM") {
+            minimapOpener();
+        } else if (e.key == "Escape") {
+            $("#instructionModal").modal("hide");
+            $("#test_summary").modal("hide");
+        } else if (e.ctrlKey == true && e.code == "KeyB") {
+            //toggle bookmark
+            var q_active = $(".sidebar .sections .question[data-question-id=" + question_id + "]");
+            var bookmark_status;
+            if (test_data.question_map[question_id].bookmark_status == 1) {
+                $(".info .b_mark .material-icons")
+                    .removeClass("b_mark_selected")
+                    .html("bookmark_border");
+                test_data.question_map[question_id].bookmark_status = 0;
+                q_active.find(".ques_status").removeClass("bookmarked");
+                bookmark_status = 0;
+            } else {
+                $(".info .b_mark .material-icons").addClass("b_mark_selected").html("bookmark");
+                test_data.question_map[question_id].bookmark_status = 1;
+                q_active.find(".ques_status").addClass("bookmarked");
+                bookmark_status = 1;
+            }
+            var data = {};
+            var systime = new Date();
+            data = {
+                question_id: question_id,
+                bookmark_status: bookmark_status,
+                time_spent: test_data.question_map[question_id].time_spent,
+                server_time: timestamp,
+                system_time: systime.getTime(),
+            };
+            if (test_data.question_map[question_id].answer_status != undefined)
+                data.answer_status = test_data.question_map[question_id].answer_status;
+            actionListner("toggle_bookmark", data);
+        } else if (e.ctrlKey == true && e.key == "ArrowRight") {
+            // next sec
+            var curr_sec = $(".sidebar .panel .question.sidebar_active").attr("data-section-id");
+            var next_sec = Object.keys(test_data.test_sections);
+            var next_sec_index = next_sec.indexOf(curr_sec);
+            if (!(next_sec.length - 1 == next_sec_index)) {
+                var next_sec_id = next_sec[next_sec_index + 1];
+                var next_id;
+                if(test_data.test_sections[next_sec_id] !== undefined) {
+                    next_id = test_data.test_sections[next_sec_id].questions[0];
+                    backQuestion(next_id);
+                }
+            }
+        } else if (e.ctrlKey == true && e.key == "ArrowLeft") {
+            //prev sec
+            var curr_sec = $(".sidebar .panel .question.sidebar_active").attr("data-section-id");
+            var next_sec = Object.keys(test_data.test_sections);
+            var next_sec_index = next_sec.indexOf(curr_sec);
+            if (next_sec_index != 0) {
+                var next_sec_id = next_sec[next_sec_index - 1];
+                var next_id = test_data.test_sections[next_sec_id].questions[0];
+                backQuestion(next_id);
+            }
+        } else if (e.ctrlKey == true && e.code == "KeyZ") {
+            // open shortcut sweetalert
+            shortcuts();
+        }
+    }
+}
+
+//calc each question timespent
+function timeSpent() {
+    var current_id = $(".display-area .question-wrapper").attr("data-question-id");
+    if (current_id != undefined && test_data.question_map[current_id] != undefined) {
+        if (test_data.question_map[current_id].time_spent == undefined)
+            test_data.question_map[current_id].time_spent = 0;
+        test_data.question_map[current_id].time_spent =
+            parseInt(test_data.question_map[current_id].time_spent) + 1;
+    }
+}
+
+//calc last saved
+function time_ago(opacity = 0.3) {
+    if (timeago != undefined) {
+        var systime = new Date();
+        var timeago2 = systime.getTime() / 1000 - timeago / 1000;
+        if (timeago2 > 0 && secondsToDhms(timeago2, 1) != 0)
+            $(".fixed-row-bottom .last_saved")
+                .removeClass("hidden")
+                .html(
+                    "<i class='material-icons'>security</i>Last Saved: " +
+                        secondsToDhms(timeago2, 1) +
+                        " ago!"
+                )
+                .css("opacity", opacity);
+        else
+            $(".fixed-row-bottom .last_saved")
+                .removeClass("hidden")
+                .html("<i class='material-icons'>security</i>Last Saved: Just Now")
+                .css("opacity", opacity);
+    }
+}
+
+//for keyboard shortcuts
+function shortcuts() {
+    var data =
+        "<div class='col-md-6 text'> <div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>i</code></span> <span class='col-md-8 key-name'>Open Instruction Modal</span> </div><div class=row> <span class='col-md-4 keys'><code>&#8592; , &#8594; </code>&nbsp; </span> <span class='col-md-8 key-name'>Navigate Question</span> </div><div class=row> <span class='col-md-4 keys'><code>Esc</code></span> <span class='col-md-8 key-name'>Close All Dialogue Boxes</span> </div><div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>b</code></span> <span class='col-md-8 key-name'>Toggle Bookmark</span> </div></div><div class='col-md-6  text'> <div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>m</code></span> <span class='col-md-8 key-name'>Open Test Summary</span> </div><div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>Esc</code> </span><span class='col-md-8 key-name'>Quit Test</span> </div><div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>&#8592;,&#8594;</code></span> <span class='col-md-8 key-name'>Navigate Sections</span> </div><div class=row> <span class='col-md-4 keys'><code>ctrl</code>+<code>z</code></span> <span class='col-md-8 key-name'>Open Shortcuts Box</span> </div></div>";
+    return swal({
+        title: "Shortcut Keys",
+        content: {
+            element: "div",
+            attributes: {
+                className: "col-md-12 content",
+                innerHTML: data,
+            },
+        },
+        button: false,
+    });
+}
+
+//rand number genrator
+function randomIntFromInterval(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+//encrypt and save
+function save_data() {
+    var encrypted_data = CryptoJS.AES.encrypt(JSON.stringify(g_action_log), instructions.enc_uid);
+    localStorage.setItem(instructions.enc_uid, encrypted_data);
+}
+
+//derypt and update the data to g_action_log
+function check_storage() {
+    if (!(localStorage.getItem(instructions.enc_uid) === null)) {
+        var decrypted_data = CryptoJS.AES.decrypt(
+            localStorage.getItem(instructions.enc_uid),
+            instructions.enc_uid
+        ).toString(CryptoJS.enc.Utf8);
+        var obj = JSON.parse(decrypted_data);
+        // console.log(JSON.parse(decrypted_data));
+        g_action_log = obj;
+    }
+}
+
+function findActiveSection() {
+    //duration - timeleft
+    if (test_data.sectional_duration != undefined) {
+        $(".sec_divider").removeClass("hidden");
+        var spentTime = instructions.duration - timeleft;
+        var time = 0;
+
+        $.each(test_data.sectional_duration, function (k, v) {
+            time += parseInt(v);
+            if (spentTime < time) {
+                if (current_section != k) {
+                    console.log("changed_sec");
+                    sectional_timeleft = parseInt(v) - (spentTime - (time - parseInt(v)));
+                }
+                current_section = k;
+                return false;
+            }
+        });
+        var q_id = $(".display-area .question-wrapper").attr("data-question-id");
+        if (
+            test_data.test_sections[current_section] != undefined &&
+            $.inArray(q_id, test_data.test_sections[current_section].questions) == -1 &&
+            q_id != undefined
+        ) {
+            fetchQuestion(test_data.test_sections[current_section].questions[0]);
+        }
+        return current_section;
+    } else {
+        current_section = "";
+        return "";
+    }
+}
+
+function counter() {
+    var value = $(".ql-editor").text();
+
+    if (value.length == 0) {
+        $(".word-counter").html("Word Count : " + 0);
+        return;
+    }
+
+    var regex = /\s+/gi;
+    var wordCount = value.trim().replace(regex, " ").split(" ").length;
+    var totalChars = value.length;
+    var charCount = value.trim().length;
+    var charCountNoSpace = value.replace(regex, "").length;
+
+    $(".word-counter").html("Word Count : " + wordCount);
+}
+
+// Full screen mode
+
+function activate_full_screen() {
+    full_screen(document.documentElement);
+    document.addEventListener("fullscreenchange", exit_full_screen, false);
+    document.addEventListener("mozfullscreenchange", exit_full_screen, false);
+    document.addEventListener("MSFullscreenChange", exit_full_screen, false);
+    document.addEventListener("webkitfullscreenchange", exit_full_screen, false);
+}
+
+function full_screen(element) {
+    if (element.requestFullScreen) {
+        element.requestFullScreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullScreen) {
+        element.webkitRequestFullScreen();
+    } else if (element.msRequestFullScreen) {
+        element.msRequestFullScreen();
+    }
+}
+
+function exit_full_screen() {
+    var current_mode = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+    if (!current_mode) {
+        if (full_screen_exit_count > 1 || getWarnCount() == 2) submitTest(false, 1, 1);
+        else $("#termination_modal").modal("show");
+    }
+}
+
+// Enable Web Cam
+var constraints = {
+    video: true
+};  
+var videoElement = document.getElementById("webcam");
+var width = 320;
+var height = 240;
+var streaming = false;
+var canvas = document.getElementById('canvas');
+function init_webcam() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        iziToast.warning({
+            title: "Caution",
+            message: "Sorry your device/browser doesn't support webcam functionality. Try again with different device/browser!",
+        });
+    } else {    
+        navigator.mediaDevices.getUserMedia(constraints).
+        then((stream) => {
+            webcam_activated = true;
+            $("#enable-webcam-btn").text("Webcam Activated");
+            videoElement.srcObject = stream;
+        }).catch(err => {
+            $("#instructionModal").addClass("hidden");
+            $("#video_permission").modal();
+            console.error("Cannot access media devices: ", err);
+        });
+
+        videoElement.addEventListener('canplay', function(ev){
+            if (!streaming) {
+              height = videoElement.videoHeight / (videoElement.videoWidth/width);
+            
+              videoElement.setAttribute('width', width);
+              videoElement.setAttribute('height', height);
+              canvas.setAttribute('width', width);
+              canvas.setAttribute('height', height);
+              streaming = true;
+            }
+        }, false);
+    }
+}
+
+function take_snapshot() {
+    var context = canvas.getContext('2d');
+    if (width && height) {
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(videoElement, 0, 0, width, height);
+        var data = canvas.toDataURL('image/png');
+        $.ajax({
+            url: "https://proctor.quizr.in/api/tracker/webcam/log",
+            type: "POST",
+            headers: {
+                Authorization: fetch_user_token(),
+            },
+            data: {
+                url_param: url_param,
+                snapshot: data,
+                timestamp: Math.round(new Date().getTime() / 1000),
+                timeleft: timeleft ? timeleft : 0
+            },
+            dataType: "json",
+            success: function (json) {
+            },
+            error: function (error) {
+            }
+        });
+    }
+}
+
+function markAnswered(question_id) {
+    let q_active = $(
+        ".sidebar .sections_info .ques_container[data-question-id=" + question_id + "]"
+    );
+    q_active.find(".no").addClass("answered");
+}
+
+function increaseWarnCount() {
+    try {
+        let sStorage = window.sessionStorage;
+        if (sStorage.getItem("warn_count") == null) {
+            sStorage.setItem("warn_count", 1);
+            return;
+        } else {
+            sStorage.setItem("warn_count", parseInt(sStorage.getItem("warn_count")) + 1);
+            return;
+        }
+    } catch (err) {
+        return;
+    }
+}
+
+function getWarnCount() {
+    try {
+        let sStorage = window.sessionStorage;
+        if (sStorage.getItem("warn_count") == null) {
+            return 0;
+        } else {
+            return parseInt(sStorage.getItem("warn_count"));
+        }
+    } catch (err) {
+        return 0;
+    }
+}

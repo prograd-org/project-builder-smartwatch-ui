@@ -1,0 +1,60 @@
+.timer-2 {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.item {
+    display: flex;
+    position: relative;
+}
+
+.item:not(:last-child) {
+    margin-right: 10px;
+}
+
+.item .d, .item .h, .item .m, .item .s {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, .1);
+}
+
+.item .d:after, .item .h:after, .item .m:after, .item .s:after {
+    opacity: 0.3;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.item svg {
+    transform: rotate(-90deg);
+    stroke: #5ea75e;
+}
+
+.item .circle {
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+    transition: all 300ms linear;
+}
+
+.d:after {
+    content: 'd';
+}
+
+.h:after {
+    content: 'h';
+}
+
+.m:after {
+    content: 'm';
+}
+
+.s:after {
+    content: 's';
+}
