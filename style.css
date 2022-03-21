@@ -65,17 +65,18 @@ html,body{
   font-size: 5rem;
 }
 .image{
-  position: relative;
+  /* position: relative; */
   top: 75px;
   display: flex;
-  justify-content: space-between;
-  margin: 0px 10px;
+  justify-content: space-around;
+  margin: 0px 0px;
 }
 button{
   background-color: transparent;
   margin-top: 75px;
   display: flex;
   justify-content: space-around;
+  border: none;
 }
 .image>img{
   width:10px;
