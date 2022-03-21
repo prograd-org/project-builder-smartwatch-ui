@@ -1,58 +1,84 @@
-body{
-    background-color: cornsilk;
-    padding: 10%;
-  }
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,body{
+  height: 98%;
+  width: 100%;
   
-  h1{
-    text-align: center;
-    color: brown;
-  }
+  background:black;
+}
+.container{
+  display: flex;
+  height: 100%;
+  margin-top: 20px;
   
-  .SW {
-      width: 250px;
-      height: 260px;
-      background-color: black;
-      border: 20px rgb(53, 52, 52) solid;
-      border-left: none;
-      border-right: none;
-      border-radius: 40px;
-      margin: auto;
-    }
-    
-    #firsttime{
-        color: white;
-        font-size: larger;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 5px;
-    }
-    
-    #secondtime{
-      color: white;
-      font-size:xx-large;
-      font-weight: bolder;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 40px;
-    }
-    
-    #day{
-      color: white;
-      margin-top: 5px;
-      font-size: x-large;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+}
+.left{
+  width: 50%;
+  background-color:rgb(43, 46, 56);
+  margin-bottom: 10px;
+}
+.right{
+  width: 50%;
+  background-color: white;
+  margin-bottom: 10px;
+}
+.text{
+  position: relative;
+  top: 285px;
+  left: 150px;
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  font-family: 'Times New Roman', Times, serif;
+}
 
-    .imgs{
-        margin-top: 75px;
-        display: flex;
-        justify-content: space-around;
-    }
+.clock{
+  height: 340px;
+  width: 270px;
+  top: 140px;
+  left: 230px;
+  background: black;
+  border-radius: 15%;
+  border-top: 25px solid grey;
+  border-bottom: 25px solid grey;
+  color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+ 
+}
+.clock h4{
+  text-align: center;
+  margin-top: 15px;
+}
+.centertime{
+  text-align: center;
+  position: relative;
+  top: 10%;
+  font-size: 1.5rem;
+  font-family: 'Times New Roman', Times, serif;
+}
+.centertime h1{
+  font-size: 5rem;
+}
+.image{
+  position: relative;
+  top: 90px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 25px;
+  
+}
+button{
+  background-color: transparent;
+  border: none;
+  outline: none;
 
-    .imgs>img{
-        width:40px;
-    }
+}
+.far,.fas{
+  color: white;
+  font-size: 25px;
+}
