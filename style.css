@@ -74,9 +74,12 @@ html,body{
 }
 button{
   background-color: transparent;
-  border: none;
-  outline: none;
+  margin-top: 75px;
+  display: flex;
   justify-content: space-around;
+}
+.image>img{
+  width:40px;
 }
 .far,.fas{
   color: white;
