@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Watch SMS</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="black">
+      <h1 class="head">SmartWatch</h1>
+    </div>
+    <div class="white">
+      <div class="watch">
+        <p id="t"></p>
+        <div class="time">
+          <p id="time"></p>
+          <p id="day"></p>
+        </div>
+        <div class="sms">
+          <p onclick="selectMsg(1)">Java</p>
+          <p onclick="selectMsg(2)">CSS</p>
+          <p onclick="selectMsg(3)">HTML</p>
+          <p onclick="selectMsg(4)">JavaScript</p>
+          <p id="showMsg"></p>
+        </div>
+        <div class="icons">
+          <img src="data:image/png;base64,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" alt="" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpwBueyYnxhyxhxj3OmV_xN3qE_e34oJfYqJaFBoI1KttCMqhhknZgJcO-2ju7XcfhZPM&usqp=CAU" alt="" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ0Cnc1z_KbBgZmKvtSg-IMKB68hb3aGSSOg&usqp=CAU" alt="" />
+        </div>
+        <div class="watchBack"></div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
