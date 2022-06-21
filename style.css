@@ -1,0 +1,73 @@
+.black{
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    left: 0;
+    background-color: black;
+}
+.white{
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    right: 0;
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+}
+.head{
+    color: white;
+    font-size: 90px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 40%;
+    margin-bottom: 30%;
+}
+.watch {
+    background: black;
+    height: 50vh;
+    width: 22vw;
+    border-radius: 85px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0; 
+   
+}
+
+.watchBack {
+    position: absolute;
+    background: #ee7e7e;
+    height: 58vh;
+    width: 22vw;
+    border-radius: 105px;
+    z-index: -1;
+   
+}
+.icons {
+    height: 6vh;
+    width: 21vw;
+    align-self: end;
+    position: absolute;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: xxx-large;
+}
